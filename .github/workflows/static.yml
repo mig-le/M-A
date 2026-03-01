@@ -1,0 +1,98 @@
+# Deploy estático melhorado — detecta build, faz build (se necessário) e deploy
+name: Deploy static content to Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  actions: read
+
+concurrency:
+  group: "pages-${{ github.ref }}"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Detect artifact path & whether to run a frontend build
+        id: detect
+        run: |
+          # Prioritized common static output folders
+          if [ -d "./public" ]; then
+            echo "path=public" >> $GITHUB_OUTPUT
+            echo "should_build=false" >> $GITHUB_OUTPUT
+          elif [ -d "./dist" ]; then
+            echo "path=dist" >> $GITHUB_OUTPUT
+            echo "should_build=false" >> $GITHUB_OUTPUT
+          elif [ -d "./_site" ]; then
+            echo "path=_site" >> $GITHUB_OUTPUT
+            echo "should_build=false" >> $GITHUB_OUTPUT
+          elif [ -d "./build" ]; then
+            echo "path=build" >> $GITHUB_OUTPUT
+            echo "should_build=false" >> $GITHUB_OUTPUT
+          else
+            # fallback: upload repo root unless we can run a build
+            echo "path=." >> $GITHUB_OUTPUT
+            if [ -f package.json ] && grep -q "\"build\"" package.json; then
+              echo "should_build=true" >> $GITHUB_OUTPUT
+            else
+              echo "should_build=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Optional frontend build (npm) — run only if package.json has "build"
+        if: ${{ steps.detect.outputs.should_build == 'true' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+        run: |
+          npm ci
+          npm run build
+          # after build, prefer common output folders if they appeared
+          if [ -d "./dist" ]; then echo "built_path=dist" >> $GITHUB_OUTPUT; fi
+          if [ -d "./public" ]; then echo "built_path=public" >> $GITHUB_OUTPUT; fi
+          if [ -d "./build" ]; then echo "built_path=build" >> $GITHUB_OUTPUT; fi
+        id: npm_build
+
+      - name: Finalize artifact path (prefer build outputs if present)
+        id: final-path
+        run: |
+          # choose built folder if npm build created one, else use detected path
+          if [ -n "${{ steps.npm_build.outputs.built_path }}" ]; then
+            echo "upload_path=${{ steps.npm_build.outputs.built_path }}" >> $GITHUB_OUTPUT
+          else
+            echo "upload_path=${{ steps.detect.outputs.path }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Tenta enviar a pasta detectada; também lista os outputs comuns como fallback
+          path: |
+            ${{ steps.final-path.outputs.upload_path }}
+            _site
+            dist
+            public
+            build
+            .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
