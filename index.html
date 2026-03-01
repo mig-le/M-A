@@ -2,16 +2,16 @@
 <html lang="pt-BR">
 
 <head>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#ff6fa3">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- Ajuste o base se seu site estiver em subpasta (ex: /M-A/). Se estiver na raiz, remova esta linha. -->
+    <base href="/M-A/">
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>M+A</title>
 
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="/assets/fotos/Eu e vc eternamente.jpg" type="image/jpeg">
-    <link rel="apple-touch-icon" href="/assets/fotos/Eu e vc eternamente.jpg">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="assets/fotos/Eu%20e%20vc%20eternamente.jpg" type="image/jpeg">
+    <link rel="apple-touch-icon" href="assets/fotos/Eu%20e%20vc%20eternamente.jpg">
 
     <meta name="theme-color" content="#ff6fa3">
     <meta name="mobile-web-app-capable" content="yes">
@@ -21,10 +21,15 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
 
     <style>
         /* --- ESTILOS DA TELA INICIAL --- */
+        :root {
+            --primary: #ff6fa3;
+            --secondary: #7ae7ff;
+        }
+
         .center-card {
             display: flex;
             flex-direction: column;
@@ -48,8 +53,8 @@
             height: 220px;
             object-fit: cover;
             border-radius: 50%;
-            border: 4px solid var(--primary, #ff6fa3);
-            box-shadow: 0 0 25px var(--primary-glow, rgba(255, 111, 163, 0.6)), 0 10px 40px rgba(0, 0, 0, 0.5);
+            border: 4px solid var(--primary);
+            box-shadow: 0 0 25px rgba(255, 111, 163, 0.6), 0 10px 40px rgba(0, 0, 0, 0.5);
             position: relative;
             z-index: 2;
         }
@@ -75,7 +80,7 @@
 
         .hero-subtitle {
             font-family: 'Quicksand', sans-serif;
-            color: var(--secondary, #7ae7ff);
+            color: var(--secondary);
             font-size: 1.1rem;
             text-transform: uppercase;
             letter-spacing: 3px;
@@ -88,7 +93,7 @@
             font-size: 1.2rem;
             font-weight: 700;
             border-radius: 50px;
-            background: linear-gradient(45deg, var(--primary, #ff6fa3), #ff4d8d);
+            background: linear-gradient(45deg, var(--primary), #ff4d8d);
             border: none;
             color: white;
             cursor: pointer;
@@ -99,7 +104,7 @@
         }
 
         #startBtn:hover {
-            transform: scale(1.1) translateY(-5px);
+            transform: scale(1.05) translateY(-3px);
             box-shadow: 0 15px 30px rgba(255, 111, 163, 0.5);
         }
 
@@ -110,7 +115,7 @@
         .btn-link {
             background: none;
             border: none;
-            color: #999;
+            color: #ddd;
             text-decoration: underline;
             cursor: pointer;
             font-size: 0.9rem;
@@ -118,18 +123,18 @@
         }
 
         .btn-link:hover {
-            color: var(--secondary, #7ae7ff);
+            color: var(--secondary);
         }
 
         @keyframes float {
 
             0%,
             100% {
-                translate: 0 0;
+                transform: translateY(0);
             }
 
             50% {
-                translate: 0 -15px;
+                transform: translateY(-15px);
             }
         }
 
@@ -161,6 +166,49 @@
             visibility: hidden;
             pointer-events: none;
         }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.15);
+                opacity: 0.9;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* mini player */
+        #global-player {
+            position: fixed;
+            right: 16px;
+            bottom: 16px;
+            background: rgba(5, 5, 10, 0.85);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 12px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            z-index: 50;
+            font-family: 'Quicksand', sans-serif;
+            backdrop-filter: blur(6px);
+        }
+
+        .music-btn {
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -171,43 +219,65 @@
         </p>
     </div>
 
-    <div id="hearts-container"></div>
+    <div id="hearts-container" aria-hidden="true"></div>
 
     <main class="page" id="page-root">
-        <section class="center-card">
+        <section class="center-card" role="main">
             <div class="hero-photo-wrapper">
-                <img src="/assets/fotos/Eu e vc eternamente.jpg" alt="Nossa Foto" class="hero-photo"
+                <img src="assets/fotos/Eu%20e%20vc%20eternamente.jpg" alt="Nossa Foto" class="hero-photo"
                     onerror="this.src='https://placehold.co/200x200/ff6fa3/white?text=Foto+Aqui'">
             </div>
 
-            <h1 class="hero-title">2 anos e 9  meses...</h1>
+            <h1 class="hero-title">2 anos e 9 meses...</h1>
             <p class="hero-subtitle">Do melhor 'sim' da minha vida</p>
 
             <button id="startBtn" type="button">Começar Nossa História</button>
 
-            <nav class="mini-nav">
-                <button class="btn-link" type="button" onclick="navigateTo('/pages/contador.html')">Ir direto para o
-                    contador</button>
+            <nav class="mini-nav" aria-label="Navegação">
+                <button class="btn-link" type="button" id="go-contador">Ir direto para o contador</button>
             </nav>
         </section>
     </main>
 
-    <div id="global-player" class="music-player-mini">
+    <div id="global-player" class="music-player-mini" aria-hidden="false">
         <div class="music-info">
             <span class="music-icon">🎵</span>
-            <span class="music-name"></span>
+            <span class="music-name">Lofi Chill</span>
         </div>
-        <button id="music-toggle" class="music-btn">PLAY</button>
-        <audio id="main-audio" src="/assets/ambient-lofi-music-chillhop-455379.mp3" loop></audio>
+        <button id="music-toggle" class="music-btn" aria-pressed="false">PLAY</button>
+        <audio id="main-audio" src="assets/ambient-lofi-music-chillhop-455379.mp3" loop preload="none"></audio>
     </div>
 
-    <div class="cursor-glow" id="glow"></div>
+    <div class="cursor-glow" id="glow" aria-hidden="true"></div>
 
-    <script src="/js/core.js"></script>
-    <script src="/js/data.js"></script>
+    <!-- scripts locais (relativos) -->
+    <script src="js/core.js"></script>
+    <script src="js/data.js"></script>
 
     <script>
-        // 1. Loader: some quando a página carrega
+        /* FALLBACK: define navigateTo caso não exista no core.js
+           - Suporta paths absolutos como "/pages/contador.html" transformando pro base href se necessário
+        */
+        if (typeof window.navigateTo !== 'function') {
+            window.navigateTo = function (path) {
+                try {
+                    const baseEl = document.querySelector('base');
+                    let base = baseEl ? baseEl.getAttribute('href') || '/' : '/';
+                    // se path começa com /, torna relativo ao base (se base não for '/')
+                    if (path.startsWith('/') && base !== '/') {
+                        path = base.replace(/\/$/, '') + path;
+                    }
+                    // normaliza barras duplas
+                    path = path.replace(/\/{2,}/g, '/');
+                    window.location.assign(path);
+                } catch (e) {
+                    console.error('navigateTo fallback failed', e);
+                    window.location.assign(path);
+                }
+            }
+        }
+
+        // Loader: some quando a página carrega
         window.addEventListener('load', () => {
             const loader = document.getElementById('loader');
             if (loader) {
@@ -215,9 +285,10 @@
             }
         });
 
-        // 2. Corações Flutuantes
+        // Corações Flutuantes
         function createHearts() {
             const container = document.getElementById('hearts-container');
+            if (!container) return;
             const icons = ['❤️', '💖', '✨', '🌸'];
 
             setInterval(() => {
@@ -227,14 +298,19 @@
                 heart.style.left = Math.random() * 100 + 'vw';
                 heart.style.top = '-20px';
                 heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
-                heart.style.opacity = Math.random();
+                heart.style.opacity = (Math.random() * 0.6 + 0.3).toString();
 
                 container.appendChild(heart);
 
                 const duration = Math.random() * 3000 + 3000;
-                const animation = heart.animate([
-                    { transform: 'translateY(0) rotate(0deg)', opacity: parseFloat(heart.style.opacity) },
-                    { transform: `translateY(100vh) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                const animation = heart.animate([{
+                    transform: 'translateY(0) rotate(0deg)',
+                    opacity: parseFloat(heart.style.opacity)
+                },
+                {
+                    transform: `translateY(100vh) rotate(${Math.random() * 360}deg)`,
+                    opacity: 0
+                }
                 ], {
                     duration: duration,
                     easing: 'linear'
@@ -244,29 +320,83 @@
             }, 500);
         }
 
-        // 3. Botão Iniciar (Usa a navigateTo do core.js, não cria uma nova)
-        document.getElementById('startBtn').addEventListener('click', () => {
-            const btn = document.getElementById('startBtn');
-            btn.style.transform = 'scale(0.9)';
-
-            // Tenta iniciar a música aqui para garantir autoplay
+        // Player controls
+        (function setupPlayer() {
             const audio = document.getElementById('main-audio');
-            const musicBtn = document.getElementById('music-toggle');
+            const btn = document.getElementById('music-toggle');
 
-            if (audio && audio.paused) {
+            if (!audio || !btn) return;
+
+            // restore state
+            const wasPlaying = localStorage.getItem('music_playing') === 'true';
+            if (wasPlaying) {
+                // tentativa de play; pode ser bloqueado pelo navegador sem interação
                 audio.play().then(() => {
-                    musicBtn.innerText = "PAUSE";
-                    localStorage.setItem('music_playing', 'true');
-                }).catch(() => console.log("Autoplay bloqueado pelo navegador"));
+                    btn.innerText = 'PAUSE';
+                    btn.setAttribute('aria-pressed', 'true');
+                }).catch(() => {
+                    btn.innerText = 'PLAY';
+                    btn.setAttribute('aria-pressed', 'false');
+                });
             }
 
-            setTimeout(() => {
-                // Chama a função global que está no core.js
-                navigateTo('/pages/contador.html');
-            }, 200);
-        });
+            btn.addEventListener('click', () => {
+                if (audio.paused) {
+                    audio.play().then(() => {
+                        btn.innerText = 'PAUSE';
+                        btn.setAttribute('aria-pressed', 'true');
+                        localStorage.setItem('music_playing', 'true');
+                    }).catch(() => {
+                        console.log('Autoplay bloqueado — aguarde interação do usuário');
+                    });
+                } else {
+                    audio.pause();
+                    btn.innerText = 'PLAY';
+                    btn.setAttribute('aria-pressed', 'false');
+                    localStorage.setItem('music_playing', 'false');
+                }
+            });
 
-        // Inicia visual
+            // pause quando a aba perde foco (opcional)
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden && !audio.paused) {
+                    audio.pause();
+                    btn.innerText = 'PLAY';
+                    btn.setAttribute('aria-pressed', 'false');
+                    localStorage.setItem('music_playing', 'false');
+                }
+            });
+        })();
+
+        // Botão Iniciar (usa navigateTo)
+        const startBtn = document.getElementById('startBtn');
+        if (startBtn) {
+            startBtn.addEventListener('click', () => {
+                startBtn.style.transform = 'scale(0.95)';
+                const audio = document.getElementById('main-audio');
+                const musicBtn = document.getElementById('music-toggle');
+
+                if (audio && audio.paused) {
+                    audio.play().then(() => {
+                        if (musicBtn) musicBtn.innerText = "PAUSE";
+                        localStorage.setItem('music_playing', 'true');
+                    }).catch(() => console.log("Autoplay bloqueado pelo navegador"));
+                }
+
+                setTimeout(() => {
+                    // chama navigateTo — fallback criado acima garante funcionamento
+                    navigateTo('/pages/contador.html');
+                }, 200);
+            });
+        }
+
+        // Navegar pro contador pelo botão da nav
+        const goContador = document.getElementById('go-contador');
+        if (goContador) {
+            goContador.addEventListener('click', () => navigateTo('/pages/contador.html'));
+        }
+
+        // iniciar efeitos
         createHearts();
     </script>
 </body>
