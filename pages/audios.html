@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Nossas Vozes 🎙️</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* --- ESTILOS DA PLAYLIST DE ÁUDIO --- */
+        .audio-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 10px;
+        }
+
+        .audio-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .audio-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-3px);
+            border-color: var(--primary, #ff6fa3);
+        }
+
+        /* Botão de Play Customizado */
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary, #ff6fa3);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px var(--primary-glow);
+            flex-shrink: 0;
+        }
+
+        .play-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Info do Áudio */
+        .audio-info {
+            flex-grow: 1;
+        }
+
+        .audio-info h4 {
+            margin: 0;
+            font-size: 1rem;
+            color: var(--secondary, #7ae7ff);
+        }
+
+        .audio-info span {
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+
+        /* Visualizador de Ondas (Simulado) */
+        .waveform {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            height: 20px;
+            margin-top: 8px;
+        }
+
+        .bar {
+            width: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+        /* Animação quando estiver tocando */
+        .playing .bar {
+            background: var(--primary);
+            animation: waveAnim 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes waveAnim {
+            from {
+                height: 5px;
+            }
+
+            to {
+                height: 20px;
+            }
+        }
+
+        /* Delays para as barras parecerem orgânicas */
+        .bar:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .bar:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .bar:nth-child(4) {
+            animation-delay: 0.1s;
+        }
+
+        .bar:nth-child(5) {
+            animation-delay: 0.3s;
+        }
+
+        .audio-card.playing {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(255, 111, 163, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <main class="page container" data-page="/pages/audios.html">
+        <header style="text-align: center; margin-bottom: 30px;">
+            <h2 class="section-title">Nossas Vozes 🎙️</h2>
+            <p style="color: var(--text-muted);">Mensagens que o coração insiste em repetir.</p>
+        </header>
+
+        <div id="audioList" class="audio-list">
+        </div>
+
+        <div class="controls-row">
+            <button class="btn outline" data-action="prev">Voltar</button>
+            <button class="btn outline" data-action="next">Próximo</button>
+        </div>
+    </main>
+
+    <script src="/js/core.js" defer></script>
+    <script src="/js/data.js" defer></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const listContainer = document.getElementById('audioList');
+
+            // Dados dos áudios (Você pode mover isso para o data.js depois)
+            const audioData = (window.data && window.data.audios) ? window.data.audios : [
+                { id: 1, title: "O primeiro 'Oi'", date: "12 de Outubro", file: "/assets/noss oi.mp3" },
+                { id: 2, title: "Aquela risada gostosa", date: "05 de Novembro", file: "/assets//Vídeo-de-Miguel-Monteiro.mp3" },
+                { id: 3, title: "Declaração inesperada", date: "Ontem", file: "/assets/2026-01-28-18-51-47.mp3" }
+            ];
+
+            let currentAudio = null;
+            let currentBtn = null;
+
+            audioData.forEach(audio => {
+                const card = document.createElement('div');
+                card.className = 'audio-card';
+                card.innerHTML = `
+                    <button class="play-btn" data-file="${audio.file}">▶</button>
+                    <div class="audio-info">
+                        <h4>${audio.title}</h4>
+                        <span>${audio.date}</span>
+                        <div class="waveform">
+                            ${'<div class="bar" style="height: 8px;"></div>'.repeat(12)}
+                        </div>
+                    </div>
+                    <audio src="${audio.file}" preload="metadata"></audio>
+                `;
+
+                const btn = card.querySelector('.play-btn');
+                const htmlAudio = card.querySelector('audio');
+
+                btn.addEventListener('click', () => {
+                    toggleAudio(htmlAudio, btn, card);
+                });
+
+                listContainer.appendChild(card);
+            });
+
+            function toggleAudio(audio, btn, card) {
+                // Se clicar em um novo áudio, para o que estava tocando
+                if (currentAudio && currentAudio !== audio) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                    currentBtn.innerText = "▶";
+                    currentBtn.closest('.audio-card').classList.remove('playing');
+                }
+
+                if (audio.paused) {
+                    audio.play();
+                    btn.innerText = "⏸";
+                    card.classList.add('playing');
+                    currentAudio = audio;
+                    currentBtn = btn;
+                } else {
+                    audio.pause();
+                    btn.innerText = "▶";
+                    card.classList.remove('playing');
+                }
+
+                // Resetar quando acabar
+                audio.onended = () => {
+                    btn.innerText = "▶";
+                    card.classList.remove('playing');
+                };
+            }
+
+            // Navegação
+            document.addEventListener('click', e => {
+                const a = e.target.closest('[data-action]');
+                if (!a) return;
+                a.dataset.action === 'prev' ? goPrev() : goNext();
+            });
+        });
+    </script>
+</body>
+
+</html>

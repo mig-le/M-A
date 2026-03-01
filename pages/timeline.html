@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Nossa História ⏳</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* --- ESTILOS DA TIMELINE --- */
+
+        .timeline-container {
+            position: relative;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px 0;
+        }
+
+        /* A Linha Central Neon */
+        .timeline-container::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background: linear-gradient(to bottom, transparent, var(--primary, #ff6fa3), var(--secondary, #7ae7ff), transparent);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -2px;
+            box-shadow: 0 0 15px var(--primary-glow);
+            border-radius: 2px;
+        }
+
+        /* O Item (Card + Ponto) */
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 50%;
+            box-sizing: border-box;
+            opacity: 0;
+            /* Começa invisível para animação */
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+
+        /* Lado Esquerdo */
+        .timeline-item.left {
+            left: 0;
+            text-align: right;
+        }
+
+        /* Lado Direito */
+        .timeline-item.right {
+            left: 50%;
+            text-align: left;
+        }
+
+        /* O Ponto (Coração na linha) */
+        .timeline-item::after {
+            content: '❤';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            right: -15px;
+            /* Ajuste para Esquerda */
+            background: var(--bg-dark, #0f0518);
+            border: 2px solid var(--primary, #ff6fa3);
+            top: 20px;
+            border-radius: 50%;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--primary, #ff6fa3);
+            box-shadow: 0 0 10px var(--primary-glow);
+            transition: 0.3s;
+        }
+
+        /* Ajuste do ponto para o lado Direito */
+        .timeline-item.right::after {
+            left: -15px;
+        }
+        .timeline-img {
+        width: 100%;
+        max-height: 300px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        background: #000;
+        }
+
+        /* Efeito Hover no Ponto */
+        .timeline-item:hover::after {
+            transform: scale(1.3);
+            background: var(--primary, #ff6fa3);
+            color: #fff;
+        }
+
+        /* O Conteúdo (Card de Vidro) */
+        .timeline-content {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+            position: relative;
+            transition: 0.3s;
+        }
+
+        .section-title-centered {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .muted-centered {
+            margin-bottom: 40px;
+        }
+
+        .timeline-content:hover {
+            transform: scale(1.02);
+            border-color: var(--secondary, #7ae7ff);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Imagem dentro do card */
+        .timeline-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .timeline-date {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--primary, #ff6fa3);
+            color: #fff;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        h3 {
+            color: #fff;
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+
+        p {
+            color: var(--text-muted, #ccc);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* --- ANIMAÇÃO DE ENTRADA (Visible Class) --- */
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- RESPONSIVIDADE (Celular) --- */
+        @media screen and (max-width: 600px) {
+            .timeline-container::after {
+                left: 30px;
+            }
+
+            /* Linha vai para a esquerda */
+
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 20px;
+            }
+
+            .timeline-item.left,
+            .timeline-item.right {
+                left: 0;
+                text-align: left;
+                /* Tudo alinhado a esquerda */
+            }
+
+            /* Ajuste dos pontos para celular */
+            .timeline-item.left::after,
+            .timeline-item.right::after {
+                left: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-animation">
+        <span>⏳</span><span>✨</span><span>🚀</span><span>❤</span><span>📅</span>
+    </div>
+
+    <main class="page container">
+        <section class="timeline">
+            <h2 class="section-title section-title-centered">
+                Nossa Jornada 🚀
+            </h2>
+            <p class="muted center muted-centered">Cada passo até aqui valeu a pena.</p>
+
+            <div id="timelineList" class="timeline-container">
+            </div>
+
+            <br>
+            <div class="controls-row">
+                <button type="button" class="btn outline" onclick="goPrev()">Voltar</button>
+                <button type="button" class="btn outline" onclick="goNext()">Próximo</button>
+            </div>
+        </section>
+        <div id="global-player" class="music-player-mini">
+            <div class="music-info">
+                <span class="music-icon">🎵</span>
+                <span class="music-name"></span>
+            </div>
+            <button id="music-toggle" class="music-btn">PAUSE</button>
+            <audio id="main-audio" src="/assets/ambient-lofi-music-chillhop-455379.mp3" loop></audio>
+        </div> 
+    </main>
+
+    <script src="/js/core.js" defer></script>
+    <script src="/js/data.js" defer></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const list = document.getElementById('timelineList');
+
+        // Fallback (caso data.js falhe)
+        const fallbackData = [
+            {
+                title: "O Início",
+                date: "2023-01-01",
+                text: "Onde tudo começou.",
+                media: "/assets/fotos/placeholder.jpg",
+                type: "image"
+            }
+        ];
+
+        const timelineData =
+            (window.data && window.data.timeline) ? window.data.timeline : fallbackData;
+
+        timelineData.forEach((item, index) => {
+            const el = document.createElement('div');
+
+            const side = index % 2 === 0 ? 'left' : 'right';
+            el.className = `timeline-item ${side}`;
+
+            // Detecta se é vídeo
+            const isVideo =
+                item.type === 'video' || (item.media && item.media.endsWith('.mp4'));
+
+            const mediaHTML = item.media
+                ? isVideo
+                    ? `
+          <video class="timeline-img" controls playsinline preload="metadata">
+            <source src="${item.media}" type="video/mp4">
+          </video>
+        `
+                    : `
+          <img
+            src="${item.media}"
+            class="timeline-img"
+            alt="${item.title}"
+            loading="lazy"
+          >
+        `
+                : '';
+
+            el.innerHTML = `
+      <div class="timeline-content">
+        ${mediaHTML}
+        <time class="timeline-date">${item.date}</time>
+        <h3>${item.title}</h3>
+        <p>${item.text}</p>
+      </div>
+    `;
+
+            list.appendChild(el);
+        });
+
+        // Animação ao aparecer na tela
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            },
+            { threshold: 0.2 }
+        );
+
+        document.querySelectorAll('.timeline-item').forEach(item => {
+            observer.observe(item);
+        });
+    });
+</script>
+
+</body>
+
+</html>

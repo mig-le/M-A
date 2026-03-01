@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Segredinho 🤫</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* --- ESTILOS DO EASTER EGG SUPER FOFO --- */
+
+        .egg-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: var(--primary, #ff6fa3);
+        }
+
+        /* Instruções que mudam */
+        .instruction-text {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.2rem;
+            color: #eee;
+            margin-bottom: 30px;
+            height: 30px;
+            /* Altura fixa para não pular quando mudar o texto */
+            transition: all 0.3s ease;
+        }
+
+        /* O SUPER CORAÇÃO */
+        .mega-heart-btn {
+            background: none;
+            border: none;
+            font-size: 6rem;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 0 15px rgba(255, 111, 163, 0.5));
+            animation: heartbeat 1.5s infinite;
+            -webkit-user-select: none;
+            user-select: none;
+            outline: none;
+        }
+
+        /* Animação de batimento cardíaco suave */
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1);
+            }
+
+            15% {
+                transform: scale(1.15);
+            }
+
+            30% {
+                transform: scale(1);
+            }
+
+            45% {
+                transform: scale(1.15);
+            }
+
+            60% {
+                transform: scale(1);
+            }
+        }
+
+        /* Efeito ao clicar (encolhe um pouco) */
+        .mega-heart-btn:active {
+            transform: scale(0.9) !important;
+        }
+
+        /* Estágios de "aquecimento" do coração */
+        .heart-stage-1 {
+            filter: drop-shadow(0 0 25px rgba(255, 111, 163, 0.8));
+            transform: scale(1.1);
+        }
+
+        .heart-stage-2 {
+            filter: drop-shadow(0 0 40px rgba(255, 111, 163, 1));
+            transform: scale(1.2);
+            animation: shake 0.5s infinite !important;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0) scale(1.2);
+            }
+
+            25% {
+                transform: translateX(-5px) scale(1.2);
+            }
+
+            75% {
+                transform: translateX(5px) scale(1.2);
+            }
+        }
+
+        /* A REVELAÇÃO FINAL (Cartão Escondido) */
+        .secret-reveal-card {
+            display: none;
+            /* Começa escondido */
+            background: rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(15px);
+            border: 2px solid var(--primary, #ff6fa3);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            animation: popInReveal 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes popInReveal {
+            from {
+                opacity: 0;
+                transform: scale(0.5) translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .secret-img {
+            width: 100%;
+            border-radius: 15px;
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .secret-msg h3 {
+            font-family: 'Dancing Script';
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .secret-msg p {
+            font-family: 'Quicksand';
+            line-height: 1.5;
+        }
+
+        /* Fundo flutuante fofo */
+        .floating-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .floating-bg span {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0.15;
+            animation: floatUp 15s linear infinite;
+        }
+
+        @keyframes floatUp {
+            to {
+                transform: translateY(-100vh) rotate(360deg);
+            }
+        }
+
+        .floating-bg span:nth-child(1) {
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-bg span:nth-child(2) {
+            left: 30%;
+            animation-delay: 5s;
+        }
+
+        .floating-bg span:nth-child(3) {
+            left: 70%;
+            animation-delay: 2s;
+        }
+
+        .floating-bg span:nth-child(4) {
+            left: 90%;
+            animation-delay: 7s;
+        }
+
+        .secret-msg p:last-child {
+            font-size: 0.9rem;
+            color: var(--secondary);
+            margin-top: 10px;
+        }
+
+        .controls-row {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="floating-bg">
+        <span>💖</span>
+        <span>✨</span>
+        <span>💌</span>
+        <span>💘</span>
+    </div>
+
+    <main class="page container" data-page="/pages/easter-eggs.html">
+        <h2 class="section-title">Um Segredinho... 🤫</h2>
+
+        <div class="egg-container">
+            <p id="instruction" class="instruction-text">O amor precisa de insistência.<br><small>(Toque no
+                    coração)</small></p>
+
+            <button id="heartBtn" class="mega-heart-btn" type="button">💖</button>
+
+            <div id="secretReveal" class="secret-reveal-card">
+                <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExYmZpbGZ0eXp4amZ0eXp4amZ0eXp4amZ0eXp4amZ0eXp4amZ0eSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/MDJ9IbxxvDUQM/giphy.gif"
+                    class="secret-img" alt="Surpresa Fofa">
+
+                <div class="secret-msg">
+                    <h3>Você encontrou! 🎉</h3>
+                    <p>Obrigado por não desistir de mim, nem por um segundo. Você é meu maior presente.</p>
+                    <p>(Válido por um abraço muito apertado agora mesmo!)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-row">
+            <button class="btn outline" data-action="prev" type="button">Voltar</button>
+            <button class="btn outline" data-action="next" type="button">Próximo</button>
+        </div>
+        <div id="global-player" class="music-player-mini">
+            <div class="music-info">
+                <span class="music-icon">🎵</span>
+                <span class="music-name"></span>
+            </div>
+            <button id="music-toggle" class="music-btn">PLAY</button>
+            <audio id="main-audio" src="/assets/ambient-lofi-music-chillhop-455379.mp3" loop></audio>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="/js/core.js" defer></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let clicks = 0;
+            const maxClicks = 7;
+
+            const heartBtn = document.getElementById('heartBtn');
+            const instruction = document.getElementById('instruction');
+            const revealCard = document.getElementById('secretReveal');
+
+            // Mensagens de progresso fofas
+            const messages = [
+                "O amor precisa de insistência...",
+                "Isso! Continue...",
+                "Meu coração tá acelerando...",
+                "Mais forte! ❤️‍🔥",
+                "Ai, tá quase lá!",
+                "Só mais um pouquinho...",
+                "PREPARA O CORAÇÃO! 💥"
+            ];
+
+            heartBtn.addEventListener('click', () => {
+                if (clicks >= maxClicks) return; // Já revelado
+
+                clicks++;
+
+                // 1. Tocar/Vibrar o celular (Feedback Tátil)
+                if (navigator.vibrate) navigator.vibrate(50);
+
+                // 2. Mudar o texto
+                instruction.innerText = messages[clicks - 1] || messages[0];
+
+                // 3. Pequena explosão de confete a CADA clique (Super Extremo!)
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 15,
+                        spread: 60,
+                        origin: { y: 0.7 },
+                        colors: ['#ff6fa3', '#ffffff']
+                    });
+                }
+
+                // 4. Mudar o estado do coração (Ficar mais intenso)
+                if (clicks === 3) {
+                    heartBtn.classList.add('heart-stage-1');
+                    instruction.style.color = "#ff6fa3";
+                } else if (clicks === 6) {
+                    heartBtn.classList.remove('heart-stage-1');
+                    heartBtn.classList.add('heart-stage-2'); // Começa a tremer
+                    instruction.style.fontWeight = "bold";
+                }
+
+                // 5. A GRANDE REVELAÇÃO (7º clique)
+                else if (clicks === maxClicks) {
+                    doFinalReveal();
+                }
+            });
+
+            function doFinalReveal() {
+                // Esconde os elementos iniciais
+                heartBtn.style.display = 'none';
+                instruction.style.display = 'none';
+
+                // Mostra o cartão secreto com animação pop-in
+                revealCard.style.display = 'block';
+
+                // Vibrição mais longa
+                if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+
+                // EXPLOSÃO FINAL DE CONFETES
+                if (typeof confetti === 'function') {
+                    var duration = 3 * 1000;
+                    var animationEnd = Date.now() + duration;
+                    var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+                    function randomInRange(min, max) {
+                        return Math.random() * (max - min) + min;
+                    }
+
+                    var interval = setInterval(function () {
+                        var timeLeft = animationEnd - Date.now();
+
+                        if (timeLeft <= 0) {
+                            return clearInterval(interval);
+                        }
+
+                        var particleCount = 50 * (timeLeft / duration);
+                        // Since particles fall down, start a bit higher than random
+                        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#ff6fa3', '#fff'] }));
+                        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#7ae7ff', '#fff'] }));
+                    }, 250);
+                }
+            }
+
+            // Navegação padrão
+            document.addEventListener('click', e => {
+                const a = e.target.closest('[data-action]');
+                if (!a) return;
+                a.dataset.action === 'prev' ? goPrev() : goNext();
+            });
+        });
+    </script>
+</body>
+
+</html>

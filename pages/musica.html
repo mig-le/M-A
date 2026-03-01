@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Nossa Trilha Sonora 🎵</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* --- ESTILOS DO MUSIC PLAYER --- */
+
+        .music-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 70vh;
+        }
+
+        /* O Disco de Vinil */
+        .vinyl-wrapper {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin-bottom: 30px;
+        }
+
+        .vinyl-disk {
+            width: 100%;
+            height: 100%;
+            background: #111;
+            border-radius: 50%;
+            background-image:
+                radial-gradient(circle, transparent 30%, rgba(255, 255, 255, 0.05) 31%, transparent 32%),
+                url('/assets/fotos/capa-musica.jpg');
+            /* COLOQUE AQUI A FOTO DE VOCÊS */
+            background-size: cover;
+            background-position: center;
+            border: 8px solid #222;
+            box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.05), 0 15px 45px rgba(0, 0, 0, 0.5);
+            transition: transform 0.5s ease;
+            animation: rotateDisk 10s linear infinite;
+            animation-play-state: paused;
+            /* Começa parado */
+        }
+
+        /* Agulha do toca-discos */
+        .vinyl-needle {
+            position: absolute;
+            top: -20px;
+            right: 10px;
+            width: 50px;
+            height: 100px;
+            background: #888;
+            clip-path: polygon(40% 0, 60% 0, 100% 100%, 0% 100%);
+            transform-origin: top center;
+            transform: rotate(-30deg);
+            transition: 0.5s;
+            z-index: 5;
+        }
+
+        /* Estado tocando */
+        .playing .vinyl-disk {
+            animation-play-state: running;
+        }
+
+        .playing .vinyl-needle {
+            transform: rotate(0deg);
+        }
+
+        /* Barra de Progresso Customizada */
+        .progress-container {
+            width: 100%;
+            max-width: 400px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 20px 0;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--primary, #ff6fa3);
+            box-shadow: 0 0 10px var(--primary-glow);
+            border-radius: 10px;
+            transition: width 0.1s linear;
+        }
+
+        /* Visualizador de Barras */
+        .visualizer {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 30px;
+            margin-bottom: 20px;
+        }
+
+        .bar {
+            width: 4px;
+            background: var(--secondary, #7ae7ff);
+            border-radius: 2px;
+            animation: bounce 0.5s ease-in-out infinite alternate;
+            animation-play-state: paused;
+        }
+
+        @keyframes rotateDisk {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes bounce {
+            from {
+                height: 5px;
+            }
+
+            to {
+                height: 25px;
+            }
+        }
+
+        /* Botão Play Estilizado */
+        .play-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--primary, #ff6fa3);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(255, 111, 163, 0.4);
+            transition: 0.3s;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+
+<body>
+    <main class="page container">
+        <section class="music-player">
+            <h2 class="section-title">Nossa Música 🎵</h2>
+
+            <div class="music-container" id="playerWrapper">
+                <div class="vinyl-wrapper">
+                    <div class="vinyl-needle"></div>
+                    <div class="vinyl-disk"></div>
+                </div>
+
+                <div class="visualizer">
+                    <div class="bar" style="animation-delay: 0.1s"></div>
+                    <div class="bar" style="animation-delay: 0.3s"></div>
+                    <div class="bar" style="animation-delay: 0.2s"></div>
+                    <div class="bar" style="animation-delay: 0.4s"></div>
+                    <div class="bar" style="animation-delay: 0.1s"></div>
+                </div>
+
+                <div id="trackTitle" class="muted">Aperte o play para ouvir...</div>
+
+                <div class="progress-container" id="progressArea">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+
+                <audio id="mainPlayer" preload="metadata">
+                    <source src="/assets/musica-tema.mp3" type="audio/mpeg">
+                </audio>
+
+                <button class="play-btn" id="masterPlay">▶</button>
+            </div>
+
+            <br><br>
+            <div class="controls-row">
+                <button class="btn outline" data-action="prev">Voltar</button>
+                <button class="btn outline" data-action="next">Próximo</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/core.js"></script>
+    <script>
+        (function () {
+            const player = document.getElementById('mainPlayer');
+            const wrapper = document.getElementById('playerWrapper');
+            const masterPlay = document.getElementById('masterPlay');
+            const progressBar = document.getElementById('progressBar');
+            const progressArea = document.getElementById('progressArea');
+            const bars = document.querySelectorAll('.bar');
+
+            // Toggle Play/Pause
+            masterPlay.addEventListener('click', () => {
+                if (player.paused) {
+                    player.play();
+                    masterPlay.innerText = '⏸';
+                    wrapper.classList.add('playing');
+                    bars.forEach(b => b.style.animationPlayState = 'running');
+                } else {
+                    player.pause();
+                    masterPlay.innerText = '▶';
+                    wrapper.classList.remove('playing');
+                    bars.forEach(b => b.style.animationPlayState = 'paused');
+                }
+            });
+
+            // Atualizar barra de progresso
+            player.addEventListener('timeupdate', () => {
+                const percent = (player.currentTime / player.duration) * 100;
+                progressBar.style.width = percent + '%';
+            });
+
+            // Clicar na barra para mudar tempo
+            progressArea.addEventListener('click', (e) => {
+                const width = progressArea.clientWidth;
+                const clickX = e.offsetX;
+                const duration = player.duration;
+                player.currentTime = (clickX / width) * duration;
+            });
+
+            // Salvar última vez ouvido
+            player.addEventListener('play', () => {
+                localStorage.setItem('nh_last_play', new Date().toISOString());
+            });
+
+            // Navegação
+            document.addEventListener('click', e => {
+                const a = e.target.closest('[data-action]');
+                if (!a) return;
+                a.dataset.action === 'prev' ? goPrev() : goNext();
+            });
+        })();
+    </script>
+</body>
+
+</html>

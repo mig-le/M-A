@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cartas pro Futuro 💌</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* Estilização Geral do Textarea */
+textarea {
+    width: 100%;
+    min-height: 150px;
+    padding: 20px;
+    
+    /* Cores e Efeito de Vidro */
+    background: rgba(255, 255, 255, 0.03); /* Fundo quase invisível */
+    color: #ffeaf2; /* Texto levemente rosado */
+    border: 2px solid rgba(255, 111, 163, 0.2); /* Borda rosa bem clarinha */
+    border-radius: 20px; /* Bordas bem arredondadas e fofas */
+    
+    /* Tipografia */
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    
+    /* Comportamento */
+    resize: vertical; /* Permite aumentar só pra baixo */
+    outline: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Efeito quando o usuário clica para escrever (Focus) */
+textarea:focus {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: #ff6fa3; /* Borda rosa acende */
+    box-shadow: 0 0 15px rgba(255, 111, 163, 0.3), 
+                inset 0 2px 10px rgba(0, 0, 0, 0.2);
+    transform: scale(1.01); /* Dá um leve "pulo" pra frente */
+}
+
+/* Estilo do Placeholder (o texto que some quando escreve) */
+textarea::placeholder {
+    color: rgba(189, 174, 198, 0.5);
+    font-style: italic;
+}
+
+/* Estilização da Barra de Rolagem interna do Textarea */
+textarea::-webkit-scrollbar {
+    width: 8px;
+}
+textarea::-webkit-scrollbar-track {
+    background: transparent;
+}
+textarea::-webkit-scrollbar-thumb {
+    background: rgba(255, 111, 163, 0.3);
+    border-radius: 10px;
+}
+.textarea-caderno {
+    background-image: linear-gradient(rgba(255, 111, 163, 0.1) 1px, transparent 1px);
+    background-size: 100% 1.6em; /* A altura da linha deve bater com o line-height */
+}
+        /* Estilos específicos para a agência de correio mágica */
+        .mailbox-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Área de escrita */
+        .write-paper {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed var(--primary, #ff6fa3);
+            border-radius: 20px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .stamp-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            justify-content: center;
+        }
+
+        .stamp-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid transparent;
+            border-radius: 8px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: 0.3s;
+        }
+
+        .stamp-btn.active {
+            background: var(--primary, #ff6fa3);
+            border-color: #fff;
+            transform: scale(1.1);
+        }
+
+        /* Lista de cartas (Grid) */
+        .letters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .envelope {
+            aspect-ratio: 1/0.8;
+            background: var(--card-bg, rgba(30, 15, 45, 0.8));
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: 0.3s;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .envelope:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .envelope.locked {
+            opacity: 0.7;
+            filter: grayscale(0.5);
+        }
+
+        .envelope.ready {
+            box-shadow: 0 0 15px var(--primary-glow);
+            border-color: var(--secondary, #7ae7ff);
+        }
+
+        .env-stamp {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .env-date {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+        }
+
+        .env-status {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 0.8rem;
+        }
+
+        /* Modal de leitura */
+        #letterModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background: var(--bg-dark, #0f0518);
+            border: 2px solid var(--primary);
+            padding: 30px;
+            border-radius: 24px;
+            max-width: 400px;
+            width: 100%;
+            position: relative;
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        /* Estilos inline movidos */
+        .write-paper > div {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .write-paper #futureDate {
+            flex: 2;
+        }
+
+        .write-paper #saveFuture {
+            flex: 1;
+        }
+
+        #modalStamp {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        #modalDate {
+            margin-bottom: 10px;
+        }
+
+        #modalText {
+            white-space: pre-wrap;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        #letterModal .modal-content .btn {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-animation">
+        <span>✉️</span><span>🌸</span><span>✨</span><span>✉️</span><span>💖</span>
+    </div>
+
+    <main class="page container">
+        <div class="mailbox-container">
+
+            <div class="card write-paper">
+                <h3 class="section-title">Nova Carta pro Futuro</h3>
+
+                <div class="stamp-selector" id="stampSelector">
+                    <button type="button" class="stamp-btn active" onclick="setStamp('💌')">💌</button>
+                    <button type="button" class="stamp-btn" onclick="setStamp('🌸')">🌸</button>
+                    <button type="button" class="stamp-btn" onclick="setStamp('🌙')">🌙</button>
+                    <button type="button" class="stamp-btn" onclick="setStamp('🦄')">🦄</button>
+                    <button type="button" class="stamp-btn" onclick="setStamp('🔥')">🔥</button>
+                </div>
+
+                <textarea id="futureText" class="textarea-caderno" placeholder="O que você quer dizer para o seu 'eu' do futuro? ou para nós meu amor?"></textarea>
+
+                <div>
+                    <input type="date" id="futureDate" title="Data para receber a carta" />
+                    <button type="button" class="btn primary" id="saveFuture">Enviar</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h4 class="section-title">Nossa Caixa de Correio</h4>
+                <p class="muted center" id="emptyMsg">Nenhuma carta no horizonte...</p>
+                <div class="letters-grid" id="lettersGrid">
+                </div>
+            </div>
+
+        </div>
+
+        <br>
+        <div class="controls-row">
+            <button type="button" class="btn outline" onclick="goPrev()">Voltar</button>
+            <button type="button" class="btn outline" onclick="goNext()">Próximo</button>
+        </div>
+        <div id="global-player" class="music-player-mini">
+            <div class="music-info">
+                <span class="music-icon">🎵</span>
+                <span class="music-name"></span>
+            </div>
+            <button id="music-toggle" class="music-btn">PLAY</button>
+            <audio id="main-audio" src="/assets/ambient-lofi-music-chillhop-455379.mp3" loop></audio>
+        </div>
+    </main>
+
+    <div id="letterModal">
+        <div class="modal-content">
+            <div id="modalStamp"></div>
+            <div id="modalDate" class="muted center"></div>
+            <div id="modalText"></div>
+            <button type="button" class="btn primary" onclick="closeModal()">Fechar</button>
+        </div>
+    </div>
+
+    <script src="/js/core.js"></script>
+    <script>
+        let currentStamp = '💌';
+
+        function setStamp(emoji) {
+            currentStamp = emoji;
+            document.querySelectorAll('.stamp-btn').forEach(b => {
+                b.classList.toggle('active', b.innerText === emoji);
+            });
+        }
+
+        function renderLetters() {
+            const grid = document.getElementById('lettersGrid');
+            const emptyMsg = document.getElementById('emptyMsg');
+            const letters = JSON.parse(localStorage.getItem('nh_future') || '[]');
+
+            grid.innerHTML = '';
+
+            if (letters.length === 0) {
+                emptyMsg.style.display = 'block';
+                return;
+            }
+            emptyMsg.style.display = 'none';
+
+            const now = new Date();
+
+            letters.forEach((l, index) => {
+                const openDate = new Date(l.date + 'T23:59:59'); // Final do dia
+                const isReady = now >= openDate;
+
+                const div = document.createElement('div');
+                div.className = `envelope ${isReady ? 'ready' : 'locked'}`;
+                div.onclick = () => openLetter(index);
+
+                div.innerHTML = `
+                    <div class="env-status">${isReady ? '✨' : '🔒'}</div>
+                    <div class="env-stamp">${l.stamp || '✉️'}</div>
+                    <div class="env-date">${new Date(l.date).toLocaleDateString()}</div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        function openLetter(index) {
+            const letters = JSON.parse(localStorage.getItem('nh_future') || '[]');
+            const l = letters[index];
+            const openDate = new Date(l.date + 'T23:59:59');
+
+            if (new Date() < openDate) {
+                alert(`Paciência! 🤫 Esta carta só poderá ser lida em ${new Date(l.date).toLocaleDateString()}`);
+                return;
+            }
+
+            document.getElementById('modalStamp').innerText = l.stamp || '✉️';
+            document.getElementById('modalDate').innerText = "Escrito em: " + new Date(l.created).toLocaleDateString();
+            document.getElementById('modalText').innerText = l.text;
+            document.getElementById('letterModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('letterModal').style.display = 'none';
+        }
+
+        document.getElementById('saveFuture').addEventListener('click', () => {
+            const t = document.getElementById('futureText').value.trim();
+            const d = document.getElementById('futureDate').value;
+
+            if (!t || !d) { alert('Escreva a carta e escolha a data!'); return; }
+
+            // Verificação básica de data futura
+            if (new Date(d) <= new Date().setHours(0, 0, 0, 0)) {
+                alert('A data de entrega deve ser no futuro!');
+                return;
+            }
+
+            const arr = JSON.parse(localStorage.getItem('nh_future') || '[]');
+            arr.push({
+                text: t,
+                date: d,
+                stamp: currentStamp,
+                created: new Date().toISOString()
+            });
+
+            localStorage.setItem('nh_future', JSON.stringify(arr));
+
+            // Limpar
+            document.getElementById('futureText').value = '';
+            alert('Carta enviada para o futuro! 🚀');
+            renderLetters();
+        });
+
+        // Iniciar
+        document.addEventListener('DOMContentLoaded', renderLetters);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nossa Sala de Jogos 💖</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/jogos.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <div class="background-animation">
+        <span>❤</span><span>💖</span><span>✨</span><span>❤</span><span>💖</span>
+        <span>✨</span><span>❤</span><span>💖</span><span>✨</span><span>❤</span>
+    </div>
+
+    <main class="page container">
+        <div id="gameArea"></div>
+        <div id="global-player" class="music-player-mini">
+            <div class="music-info">
+                <span class="music-icon">🎵</span>
+                <span class="music-name"></span>
+            </div>
+            <button id="music-toggle" class="music-btn">PLAY</button>
+            <audio id="main-audio" src="/assets/ambient-lofi-music-chillhop-455379.mp3" loop></audio>
+        </div>
+    </main>
+    
+
+    <script src="/firebase-config.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <script src="/js/core.js" defer></script>
+    <script src="/js/games.js" defer></script>
+    <script src="/js/multiplayer.js" defer></script>
+</body>
+
+</html>

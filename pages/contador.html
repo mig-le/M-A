@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nosso Tempo ⏳</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Quicksand:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* --- ESTILOS DO CONTADOR MÁGICO --- */
+
+        .full-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 70vh;
+        }
+
+        /* Container dos números */
+        .countdown-display {
+            display: flex;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Cada quadradinho do tempo */
+        .time-block {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--primary, #ff6fa3);
+            border-radius: 15px;
+            padding: 20px;
+            min-width: 90px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(255, 111, 163, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        .time-number {
+            display: block;
+            font-family: 'Orbitron', sans-serif;
+            /* Fonte futurista */
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .time-label {
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--primary, #ff6fa3);
+            margin-top: 5px;
+            letter-spacing: 2px;
+        }
+
+        .time-block.secondary {
+            border-color: var(--secondary, #7ae7ff);
+        }
+
+        .time-block.secondary .time-number {
+            color: var(--secondary, #7ae7ff);
+        }
+
+        .time-block.secondary .time-label {
+            color: var(--secondary, #7ae7ff);
+        }
+
+        .controls-row {
+            margin-top: 50px;
+        }
+
+        /* Efeito de pulso suave */
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .sub-text {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-top: -10px;
+            font-style: italic;
+        }
+
+        /* Responsivo para telas pequenas */
+        @media (max-width: 480px) {
+            .time-block {
+                min-width: 70px;
+                padding: 10px;
+            }
+
+            .time-number {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    
+    <div class="background-animation">
+        <span>💖</span><span>⏳</span><span>✨</span><span>💖</span><span>🌙</span>
+    </div>
+
+    <main class="page" id="page-root">
+        <section class="full-center container">
+            <h2 class="section-title">Estamos juntos há...</h2>
+
+            <div class="countdown-display" id="timerGrid">
+                <div class="time-block">
+                    <span class="time-number" id="days">00</span>
+                    <span class="time-label">Dias</span>
+                </div>
+                <div class="time-block">
+                    <span class="time-number" id="hours">00</span>
+                    <span class="time-label">Horas</span>
+                </div>
+                <div class="time-block">
+                    <span class="time-number" id="minutes">00</span>
+                    <span class="time-label">Minutos</span>
+                </div>
+                <div class="time-block secondary">
+                    <span class="time-number" id="seconds">00</span>
+                    <span class="time-label">Segundos</span>
+                </div>
+            </div>
+
+            <p class="sub-text">e cada segundo é um presente. ❤️</p>
+
+            <div class="controls-row">
+                <button type="button" class="btn outline" id="prev">Voltar</button>
+                <button type="button" class="btn outline" id="next">Próximo</button>
+            </div>
+        </section>
+        <div id="global-player" class="music-player-mini">
+            <div class="music-info">
+                <span class="music-icon">🎵</span>
+                <span class="music-name"></span>
+            </div>
+            <button id="music-toggle" class="music-btn">PAUSE</button>
+            <audio id="main-audio" src="/assets/ambient-lofi-music-chillhop-455379.mp3" loop></audio>
+        </div>
+    </main>
+
+    <script src="/js/core.js" defer></script>
+    <script src="/js/data.js" defer></script>
+
+    <script>
+        // --- CONFIGURAÇÃO DA DATA ---
+        // Se não houver data no localStorage, ele usa uma data padrão (Ano, Mês-1, Dia, Hora, Minuto)
+        const rawDate = localStorage.getItem('startDate') || '2023-06-01T00:00:00';
+        const startDate = new Date(rawDate);
+
+        function updateCounter() {
+            const now = new Date();
+            const diff = now - startDate;
+
+            if (diff < 0) {
+                document.querySelector('.section-title').textContent = "Faltam para começarmos:";
+                return;
+            }
+
+            // Cálculos
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+            // Atualiza o DOM com animação de preenchimento de zeros
+            document.getElementById('days').textContent = d;
+            document.getElementById('hours').textContent = String(h).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(m).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(s).padStart(2, '0');
+        }
+
+        // Atualiza a cada 1 segundo (para ver os segundos correndo!)
+        updateCounter();
+        setInterval(updateCounter, 1000);
+
+        // Navegação
+        document.getElementById('prev').addEventListener('click', () => goPrev());
+        document.getElementById('next').addEventListener('click', () => goNext());
+    </script>
+</body>
+
+</html>

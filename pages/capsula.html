@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cápsula do Tempo ⏳</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* CSS Específico da Cápsula para complementar o style.css */
+        .capsule-container {
+            position: relative;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Área de Texto Estilizada */
+        textarea {
+            width: 100%;
+            height: 150px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+            border-radius: 16px;
+            padding: 15px;
+            color: #fff;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1rem;
+            resize: none;
+            outline: none;
+            margin-bottom: 15px;
+        }
+
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        textarea:focus {
+            border-color: var(--primary, #ff6fa3);
+            box-shadow: 0 0 10px rgba(255, 111, 163, 0.2);
+        }
+
+        /* Seletor de Humor */
+        .mood-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .mood-btn {
+            font-size: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid transparent;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mood-btn.selected {
+            background: var(--primary, #ff6fa3);
+            transform: scale(1.1);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        /* Tela de Bloqueio (Lock Screen) */
+        .locked-view {
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .lock-icon {
+            font-size: 4rem;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .timer {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--secondary, #7ae7ff);
+            margin: 15px 0;
+            font-family: monospace;
+        }
+
+        /* Animação de tremor no cadeado */
+        @keyframes shake {
+            0% {
+                rotate: 0deg;
+            }
+
+            25% {
+                rotate: 5deg;
+            }
+
+            75% {
+                rotate: -5deg;
+            }
+
+            100% {
+                rotate: 0deg;
+            }
+        }
+
+        .shaking {
+            animation: shake 0.4s ease-in-out;
+            color: #ff4444;
+        }
+
+        /* Tela de Criação */
+        .create-view {
+            display: block;
+            width: 100%;
+            animation: fadeIn 0.5s;
+        }
+
+        /* Tela Revelada */
+        .revealed-view {
+            display: none;
+            width: 100%;
+            animation: popUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .revealed-content {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 15px;
+            white-space: pre-wrap;
+            border: 1px solid var(--primary, #ff6fa3);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Inline styles moved to CSS */
+        .create-view > .muted.center {
+            margin-bottom: 15px;
+        }
+
+        .create-view > label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        #openDate {
+            margin-bottom: 20px;
+        }
+
+        #saveCaps {
+            width: 100%;
+        }
+
+        .locked-view > .muted {
+            font-size: 0.8rem;
+        }
+
+        .revealed-view > .center:first-child {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        #savedMoodDisplay {
+            font-size: 2rem;
+            margin: 10px 0;
+        }
+
+        #resetButton {
+            width: 100%;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .controls-row button {
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-animation">
+        <span>⏳</span><span>✨</span><span>❤</span><span>🔒</span><span>✨</span>
+    </div>
+
+    <main class="page container">
+        <div class="card capsule-container">
+            <h2 class="section-title">Cápsula do Tempo</h2>
+
+            <div id="viewCreate" class="create-view">
+                <p class="muted center">Escreva algo hoje para lerem juntos no futuro.</p>
+
+                <label class="muted">Como você se sente hoje?</label>
+                <div class="mood-selector">
+                    <button type="button" class="mood-btn" onclick="selectMood('🥰')">🥰</button>
+                    <button type="button" class="mood-btn" onclick="selectMood('😂')">😂</button>
+                    <button type="button" class="mood-btn" onclick="selectMood('🤔')">🤔</button>
+                    <button type="button" class="mood-btn" onclick="selectMood('😴')">😴</button>
+                    <button type="button" class="mood-btn" onclick="selectMood('🥳')">🥳</button>
+                </div>
+
+                <textarea id="capsText" placeholder="Querido futuro nós..."></textarea>
+
+                <label class="muted" for="openDate">Abrir em:</label>
+                <input type="date" id="openDate" title="Selecione a data para abrir a cápsula" />
+
+                <button type="button" class="btn primary big" id="saveCaps">🔒 Selar
+                    Cápsula</button>
+            </div>
+
+            <div id="viewLocked" class="locked-view hidden">
+                <div class="lock-icon" id="lockIcon">🔒</div>
+                <h3>Cápsula Selada</h3>
+                <p class="muted">Esta mensagem está protegida pelo tempo.</p>
+                <div class="timer" id="countdown">--d --h --m --s</div>
+                <p class="muted">Disponível em: <span id="targetDisplay"></span></p>
+                <br>
+                <button type="button" class="btn ghost sm" onclick="resetCapsule()">🗑️ Destruir Cápsula</button>
+            </div>
+
+            <div id="viewRevealed" class="revealed-view hidden">
+                <div class="center">🔓✨</div>
+                <h3 class="center">A espera acabou!</h3>
+                <p class="muted center">Escrito em: <span id="writeDateDisplay"></span></p>
+                <div id="savedMoodDisplay"></div>
+
+                <div class="revealed-content" id="revealedText"></div>
+
+                <button type="button" class="btn primary" id="resetButton" onclick="resetCapsule()">Arquivar / Nova Cápsula</button>
+            </div>
+        </div>
+
+        <br>
+        <div class="controls-row">
+            <button type="button" class="btn outline" onclick="goPrev()">Voltar</button>
+            <button type="button" class="btn outline" onclick="goNext()">Próximo</button>
+        </div>
+        <div id="global-player" class="music-player-mini">
+            <div class="music-info">
+                <span class="music-icon">🎵</span>
+                <span class="music-name"></span>
+            </div>
+            <button id="music-toggle" class="music-btn">PLAY</button>
+            <audio id="main-audio" src="/assets/ambient-lofi-music-chillhop-455379.mp3" loop></audio>
+        </div>
+    </main>
+
+    <script src="/js/core.js"></script>
+    <script>
+        // --- LÓGICA DA CÁPSULA ---
+        let selectedMood = '🥰';
+        let countdownInterval;
+
+        function selectMood(mood) {
+            selectedMood = mood;
+            document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+            event.target.closest('.mood-btn').classList.add('selected');
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', checkCapsule);
+
+        function checkCapsule() {
+            const data = JSON.parse(localStorage.getItem('nh_capsule'));
+            const viewCreate = document.getElementById('viewCreate');
+            const viewLocked = document.getElementById('viewLocked');
+            const viewRevealed = document.getElementById('viewRevealed');
+
+            if (!data) {
+                // Modo Criação
+                viewCreate.classList.remove('hidden');
+                viewLocked.classList.add('hidden');
+                viewRevealed.classList.add('hidden');
+            } else {
+                const now = new Date().getTime();
+                const target = new Date(data.date).getTime();
+
+                // Adiciona um pequeno "offset" para garantir que pegue o final do dia ou hora exata se preferir
+                // Aqui vamos considerar meia-noite do dia escolhido (horário UTC/Local do input)
+                // O input date retorna YYYY-MM-DD.
+
+                if (now >= target) {
+                    // Modo Revelado
+                    viewCreate.classList.add('hidden');
+                    viewLocked.classList.add('hidden');
+                    viewRevealed.classList.remove('hidden');
+
+                    document.getElementById('revealedText').textContent = data.text;
+                    document.getElementById('savedMoodDisplay').textContent = data.mood || '❤️';
+                    document.getElementById('writeDateDisplay').textContent = new Date(data.created).toLocaleDateString();
+                    triggerConfetti(); // Solta confetes!
+                } else {
+                    // Modo Trancado
+                    viewCreate.classList.add('hidden');
+                    viewLocked.classList.remove('hidden');
+                    viewRevealed.classList.add('hidden');
+
+                    document.getElementById('targetDisplay').textContent = new Date(data.date).toLocaleDateString();
+
+                    // Inicia Timer
+                    startCountdown(target);
+                }
+            }
+        }
+
+        document.getElementById('saveCaps').addEventListener('click', () => {
+            const text = document.getElementById('capsText').value.trim();
+            const dateVal = document.getElementById('openDate').value; // YYYY-MM-DD
+
+            if (!text || !dateVal) {
+                alert('Por favor, escreva uma mensagem e escolha uma data!');
+                return;
+            }
+
+            // Validar se a data é no futuro
+            const targetDate = new Date(dateVal);
+            // Ajustar para o fim do dia ou garantir que não seja ontem
+            targetDate.setHours(0, 0, 0, 0);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (targetDate <= today) {
+                alert('A data precisa ser no futuro! Senão não é uma cápsula do tempo, né? 😉');
+                return;
+            }
+
+            const capsuleData = {
+                text: text,
+                date: dateVal + 'T00:00:00', // Força formato ISO
+                mood: selectedMood,
+                created: new Date().toISOString()
+            };
+
+            localStorage.setItem('nh_capsule', JSON.stringify(capsuleData));
+
+            // Animação e recarregamento
+            alert('Cápsula selada com sucesso! 🔒');
+            checkCapsule();
+        });
+
+        function startCountdown(targetTime) {
+            if (countdownInterval) clearInterval(countdownInterval);
+
+            function update() {
+                const now = new Date().getTime();
+                const distance = targetTime - now;
+
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    checkCapsule(); // Recarrega para abrir
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('countdown').innerText =
+                    `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            }
+
+            update();
+            countdownInterval = setInterval(update, 1000);
+
+            // Efeito visual se clicar no cadeado
+            document.getElementById('lockIcon').addEventListener('click', function () {
+                this.classList.add('shaking');
+                setTimeout(() => this.classList.remove('shaking'), 500);
+            });
+        }
+
+        function resetCapsule() {
+            if (confirm('Tem certeza? Isso apagará a mensagem atual para sempre.')) {
+                localStorage.removeItem('nh_capsule');
+                location.reload();
+            }
+        }
+
+        function triggerConfetti() {
+            // Efeito simples de confete CSS
+            const colors = ['#ff6fa3', '#7ae7ff', '#ffffff'];
+            for (let i = 0; i < 30; i++) {
+                const c = document.createElement('div');
+                c.style.position = 'fixed';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.top = '-10px';
+                c.style.width = '10px'; c.style.height = '10px';
+                c.style.background = colors[Math.floor(Math.random() * 3)];
+                c.style.transition = 'top 3s ease-in, transform 3s linear';
+                c.style.zIndex = '9999';
+                document.body.appendChild(c);
+                setTimeout(() => {
+                    c.style.top = '110vh';
+                    c.style.transform = `rotate(${Math.random() * 360}deg)`;
+                }, 100);
+                setTimeout(() => c.remove(), 3000);
+            }
+        }
+    </script>
+</body>
+
+</html>

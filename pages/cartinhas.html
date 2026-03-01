@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Nossas Cartinhas 💌</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@400;600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* --- ESTILOS ESPECÍFICOS DA PÁGINA DE CARTAS --- */
+
+        /* Layout em Grid para os Envelopes */
+       #letterList {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        column-gap: 25px;
+        row-gap: 120px; /* 👈 espaço vertical REAL */
+        margin: 30px 0;
+        perspective: 1000px;
+        }
+
+
+        /* O Envelope (Card Fechado) */
+        .envelope-wrapper {
+           margin: 0;
+            position: relative;
+            height: 200px;
+            cursor: pointer;
+            transition: transform 0.4s ease;
+             height: 200px;
+                transition: height 0.5s ease;
+        }
+
+        .envelope-wrapper:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Face do Envelope */
+        .envelope-face {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2a1a35, #150a1b);
+            border: 1px solid rgba(255, 111, 163, 0.3);
+            border-radius: 12px;
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            z-index: 2;
+            transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+        }
+
+        /* Detalhes do Envelope (Triângulo da aba) */
+        .envelope-face::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.05);
+            transform: skewY(10deg);
+            /* Efeito decorativo */
+        }
+
+        /* Selo de Cera (Emoji) */
+        .wax-seal {
+            font-size: 3rem;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+            transition: transform 0.3s;
+        }
+
+        .envelope-wrapper:hover .wax-seal {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        .envelope-title {
+            
+            margin-top: 15px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            color: #ff6fa3;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        /* O Papel da Carta (Escondido inicialmente) */
+        .letter-paper {
+            margin: 15px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            background: #fff0f5;
+            /* Papel rosado */
+            color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Dancing Script', cursive;
+            /* Fonte manuscrita */
+            font-size: 1.3rem;
+            line-height: 1.6;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+            transform: rotateX(90deg);
+            /* Escondido em 3D */
+            transform-origin: top;
+            transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+            opacity: 0;
+            z-index: 1;
+            overflow-y: auto;
+        }
+
+        /* Linhas do papel */
+        .letter-paper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: repeating-linear-gradient(transparent, transparent 29px, rgba(0, 0, 0, 0.05) 30px);
+            pointer-events: none;
+        }
+
+        /* ESTADO ABERTO (Adicionado via JS) */
+        .envelope-wrapper.open .envelope-face {
+            transform: translateY(120px) scale(0.9) rotateX(-45deg);
+            opacity: 0;
+            pointer-events: none;
+        }
+.envelope-wrapper.open {
+  height: 380px; /* espaço reservado */
+}
+
+        .envelope-wrapper.open .letter-paper {
+            transform: rotateX(0deg);
+            opacity: 1;
+            z-index: 10;
+            height: auto;
+            min-height: 300px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            top: 0;
+            /* Sobe um pouco */
+        }
+
+        /* --- ÁREA SECRETA (COFRE) --- */
+        .secret-container {
+            margin-top: 50px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+            padding-top: 30px;
+        }
+
+        .secret-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--primary, #ff6fa3);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Input estiloso */
+        .secret-input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        #secretInput {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-bottom: 2px solid var(--primary, #ff6fa3);
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            font-size: 1.2rem;
+            letter-spacing: 5px;
+            /* Esconde a senha com estilo */
+            width: 150px;
+            transition: 0.3s;
+        }
+
+        #secretInput:focus {
+            width: 200px;
+            background: rgba(255, 255, 255, 0.15);
+            outline: none;
+        }
+
+        /* Animação de Erro */
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-10px);
+            }
+
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.3s ease-in-out;
+            border-bottom-color: #ff4444 !important;
+        }
+
+        /* Área Secreta Revelada */
+        .secret-revealed {
+            display: none;
+            background: linear-gradient(135deg, #ff6fa3, #9b59b6);
+            padding: 30px;
+            border-radius: 20px;
+            color: #fff;
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 30px var(--primary-glow, rgba(255, 111, 163, 0.5));
+        }
+
+        .secret-revealed h3 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .secret-revealed p {
+            font-size: 1.2rem;
+            line-height: 1.5;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-animation">
+        <span>💌</span><span>✨</span><span>💘</span><span>📝</span><span>✨</span>
+    </div>
+
+    <main class="page container">
+        <section class="letters">
+            <h2 class="section-title" style="text-align: center; margin-bottom: 30px;">
+                Minhas Cartas para Você 💌
+            </h2>
+
+            <div id="letterList">
+            </div>
+
+            <div class="secret-container">
+
+                <div class="secret-card" id="lockScreen">
+                    <div style="font-size: 3rem; margin-bottom: 10px;">🔐</div>
+                    <label for="secretInput" class="muted">Esta área requer uma palavra-passe</label>
+                    <div class="secret-input-group">
+                        <input id="secretInput" placeholder="••••" type="password" />
+                        <button id="unlockBtn" class="btn primary">Desbloquear</button>
+                    </div>
+                    <p id="secretMsg" class="muted" style="height: 20px; margin-top: 5px; font-size: 0.8rem;"></p>
+                </div>
+
+                <div class="secret-revealed" id="secretContent">
+                    <h3>💖 Área Exclusiva</h3>
+                    <p>
+                        Se você está lendo isso, você acertou a senha do meu coração.<br>
+                        Obrigado por ser a melhor parte dos meus dias.<br>
+                        <b>Eu te amo infinitamente!</b>
+                    </p>
+                    <br>
+                    <div style="font-size: 3rem;">💑🚀🪐</div>
+                </div>
+
+            </div>
+
+            <br><br>
+            <div class="controls-row" style="display: flex; gap: 10px; justify-content: center;">
+                <button class="btn outline" type="button" onclick="goPrev()" style="flex:1">Voltar</button>
+                <button class="btn outline" type="button" onclick="goNext()" style="flex:1">Próximo</button>
+            </div>
+            <div id="global-player" class="music-player-mini">
+                <div class="music-info">
+                    <span class="music-icon">🎵</span>
+                    <span class="music-name"></span>
+                </div>
+                <button id="music-toggle" class="music-btn">PLAY</button>
+                <audio id="main-audio" src="/assets/ambient-lofi-music-chillhop-455379.mp3" loop></audio>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/core.js" defer></script>
+    <script src="/js/data.js" defer></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const list = document.getElementById('letterList');
+            const input = document.getElementById('secretInput');
+            const btn = document.getElementById('unlockBtn');
+            const msg = document.getElementById('secretMsg');
+            const lockScreen = document.getElementById('lockScreen');
+            const secretContent = document.getElementById('secretContent');
+
+            const SECRET_PASSWORD = '010623'; // Defina sua senha aqui
+            const STORAGE_KEY = 'nh_secret_unlocked';
+
+            // Dados de Fallback (Caso data.js não carregue)
+            const fallbackLetters = [
+                { title: "O Primeiro Oi", text: "Lembro exatamente de como meu coração bateu diferente quando te vi pela primeira vez..." },
+                { title: "Sobre Seu Sorriso", text: "Seu sorriso é, sem dúvida, a curva mais bonita do universo. Ele ilumina meus dias cinzas." },
+                { title: "Promessa", text: "Prometo estar ao seu lado não só nos dias de sol, mas segurar o guarda-chuva nos dias de tempestade." }
+            ];
+            document.querySelectorAll('.envelope-wrapper').forEach(card => {
+                card.addEventListener('click', () => {
+                    document
+                        .querySelectorAll('.envelope-wrapper.open')
+                        .forEach(open => open.classList.remove('open'));
+
+                    card.classList.toggle('open');
+                });
+            });
+
+            // 1. RENDERIZAR ENVELOPES
+            function renderLetters() {
+                // Tenta usar window.data, se não, usa fallback
+                const letters = (window.data && window.data.letters) ? window.data.letters : fallbackLetters;
+
+                list.innerHTML = '';
+                letters.forEach((l, index) => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'envelope-wrapper';
+                    wrapper.onclick = () => toggleEnvelope(wrapper);
+
+                    wrapper.innerHTML = `
+                        <div class="envelope-face">
+                            <div class="wax-seal">❤️</div>
+                            <div class="envelope-title">Para: Você<br><span style="font-size:0.7em; opacity:0.8">${l.title}</span></div>
+                        </div>
+                        <div class="letter-paper">
+                            <h3 style="border-bottom: 2px solid rgba(0,0,0,0.1); padding-bottom:10px; margin-bottom:10px;">${l.title}</h3>
+                            <p>${l.text}</p>
+                            <div style="text-align:right; margin-top:20px; font-style:italic;">Com amor,<br>Eu</div>
+                        </div>
+                    `;
+                    list.appendChild(wrapper);
+                });
+            }
+
+            // 2. LÓGICA DE ABRIR/FECHAR CARTA
+            window.toggleEnvelope = function (element) {
+                // Fecha outros abertos
+                document.querySelectorAll('.envelope-wrapper.open').forEach(el => {
+                    if (el !== element) el.classList.remove('open');
+                });
+                // Abre/Fecha o atual
+                element.classList.toggle('open');
+            }
+
+            // 3. LÓGICA DA ÁREA SECRETA
+            function unlockArea() {
+                lockScreen.style.display = 'none';
+                secretContent.style.display = 'block';
+                spawnConfetti(); // Solta confetes
+            }
+
+            // Checar se já desbloqueou antes
+            if (localStorage.getItem(STORAGE_KEY) === 'true') {
+                unlockArea();
+            }
+
+            btn.addEventListener('click', () => {
+                const val = input.value.trim().toLowerCase();
+                if (!val) {
+                    msg.textContent = 'O campo está vazio...';
+                    return;
+                }
+
+                if (val === SECRET_PASSWORD || val === 'luv') {
+                    localStorage.setItem(STORAGE_KEY, 'true');
+                    unlockArea();
+                } else {
+                    // Erro
+                    msg.textContent = 'Senha incorreta 🔒';
+                    input.classList.add('shake');
+                    setTimeout(() => input.classList.remove('shake'), 400);
+                    input.value = '';
+                }
+            });
+
+            // Permite apertar Enter no input
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') btn.click();
+            });
+
+            // Iniciar
+            renderLetters();
+        });
+
+        // Função Bônus: Confetes
+        function spawnConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const c = document.createElement('div');
+                c.style.position = 'fixed';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.top = '-20px';
+                c.style.width = Math.random() * 10 + 5 + 'px';
+                c.style.height = c.style.width;
+                c.style.background = ['#ff6fa3', '#7ae7ff', '#ffd166'][Math.floor(Math.random() * 3)];
+                c.style.borderRadius = '50%';
+                c.style.zIndex = '9999';
+                c.style.transition = `top ${Math.random() * 2 + 2}s ease-in, opacity 3s`;
+                document.body.appendChild(c);
+
+                setTimeout(() => {
+                    c.style.top = '110vh';
+                    c.style.opacity = '0';
+                }, 100);
+                setTimeout(() => c.remove(), 4000);
+            }
+        }
+    </script>
+</body>
+
+</html>

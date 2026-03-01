@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Nosso Compromisso 📜</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* --- ESTILOS DO CONTRATO --- */
+        .contract-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.05);
+            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .contract-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .contract-header h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: var(--primary, #ff6fa3);
+            margin: 0;
+        }
+
+        .contract-body {
+            font-family: 'Quicksand', sans-serif;
+            color: #eee;
+            line-height: 1.8;
+        }
+
+        /* Lista Estilizada */
+        .contract-list {
+            list-style: none;
+            padding: 0;
+            margin: 30px 0;
+        }
+
+        .contract-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+        .contract-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(10px);
+        }
+
+        .contract-item::before {
+            content: '✦';
+            color: var(--secondary, #7ae7ff);
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        /* Área de Assinatura */
+        .signature-area {
+            margin-top: 40px;
+            text-align: center;
+            border-top: 1px dashed rgba(255, 255, 255, 0.2);
+            padding-top: 30px;
+        }
+
+        #accept {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Selo de "Firmado" */
+        .sealed {
+            background: #2ecc71 !important;
+            border-color: #27ae60 !important;
+            pointer-events: none;
+            transform: scale(0.9) rotate(-3deg);
+        }
+
+        .sealed::after {
+            content: ' ✓ FIRMADO';
+            font-weight: bold;
+        }
+
+        /* Decoração */
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8rem;
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        #statusMsg {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="page container" data-page="/pages/contrato.html">
+
+        <div class="contract-container">
+            <div class="watermark">❤</div>
+
+            <header class="contract-header">
+                <h2 class="section-title">Contrato de Afeto</h2>
+                <p>Cláusulas irrevogáveis para o nosso "nós".</p>
+            </header>
+
+            <div class="contract-body">
+                <p>Por meio deste instrumento digital, as partes concordam em:</p>
+
+                <ul class="contract-list">
+                    <li class="contract-item">Respeitar a individualidade e os sonhos um do outro.</li>
+                    <li class="contract-item">Ouvir com o coração, mesmo quando o silêncio for a única resposta.</li>
+                    <li class="contract-item">Rir juntos das bobagens e transformar dias cinzas em coloridos.</li>
+                    <li class="contract-item">Conversar e acolher antes de qualquer julgamento.</li>
+                    <li class="contract-item">Ser o porto seguro e a maior torcida um do outro.</li>
+                </ul>
+            </div>
+
+            <div class="signature-area">
+                <button type="button" id="accept" class="btn primary">Firmar Compromisso</button>
+                <p id="statusMsg"></p>
+            </div>
+        </div>
+
+        <div class="controls-row">
+            <button type="button" class="btn outline" data-action="prev">Voltar</button>
+            <button type="button" class="btn outline" data-action="next">Próximo</button>
+        </div>
+        <div id="global-player" class="music-player-mini">
+            <div class="music-info">
+                <span class="music-icon">🎵</span>
+                <span class="music-name"></span>
+            </div>
+            <button id="music-toggle" class="music-btn">PLAY</button>
+            <audio id="main-audio" src="/assets/ambient-lofi-music-chillhop-455379.mp3" loop></audio>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="/js/core.js" defer></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const acceptBtn = document.getElementById('accept');
+            const statusMsg = document.getElementById('statusMsg');
+
+            // Verifica se já aceitou anteriormente
+            if (localStorage.getItem('nh_contract') === '1') {
+                setAsSigned();
+            }
+
+            acceptBtn.addEventListener('click', () => {
+                // Salva no Navegador
+                localStorage.setItem('nh_contract', '1');
+
+                // Efeito de confete
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#ff6fa3', '#7ae7ff', '#ffffff']
+                    });
+                }
+
+                setAsSigned();
+            });
+
+            function setAsSigned() {
+                acceptBtn.classList.add('sealed');
+                acceptBtn.innerText = ""; // Limpa texto original
+                statusMsg.innerText = "Este contrato foi digitalmente assinado e guardado no coração.";
+            }
+
+            // Navegação padrão
+            document.addEventListener('click', e => {
+                const a = e.target.closest('[data-action]');
+                if (!a) return;
+                a.dataset.action === 'prev' ? goPrev() : goNext();
+            });
+        });
+    </script>
+</body>
+
+</html>

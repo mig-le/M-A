@@ -1,0 +1,466 @@
+/* --- RESET & BASE --- */
+:root {
+    --bg-dark: #0f0518;
+    /* Roxo muito escuro */
+    --card-bg: rgba(30, 15, 45, 0.6);
+    /* Vidro escuro */
+    --primary: #ff6fa3;
+    /* Rosa Romântico */
+    --primary-glow: rgba(255, 111, 163, 0.4);
+    --secondary: #7ae7ff;
+    /* Azul Ciano Fofo */
+    --text-main: #ffeaf2;
+    /* Branco rosado */
+    --text-muted: #bdaec6;
+    /* Lilás acinzentado */
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --font-main: 'Quicksand', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background: var(--bg-dark);
+    background-image: radial-gradient(circle at top right, #2a0e36 0%, var(--bg-dark) 60%);
+    font-family: var(--font-main);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+    padding: 20px 0;
+}
+
+/* --- ANIMAÇÃO DE FUNDO (CORAÇÕES) --- */
+.background-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.background-animation span {
+    position: absolute;
+    bottom: -50px;
+    font-size: 24px;
+    opacity: 0.3;
+    animation: floatUp 15s linear infinite;
+    will-change: transform, opacity;
+}
+
+.background-animation span:nth-child(1) {
+    left: 10%;
+    animation-duration: 12s;
+    animation-delay: 0s;
+}
+
+.background-animation span:nth-child(2) {
+    left: 30%;
+    animation-duration: 18s;
+    animation-delay: 2s;
+    font-size: 30px;
+}
+
+.background-animation span:nth-child(3) {
+    left: 70%;
+    animation-duration: 10s;
+    animation-delay: 4s;
+}
+
+.background-animation span:nth-child(4) {
+    left: 50%;
+    animation-duration: 15s;
+    animation-delay: 1s;
+    font-size: 15px;
+}
+
+.background-animation span:nth-child(5) {
+    left: 90%;
+    animation-duration: 14s;
+    animation-delay: 3s;
+}
+
+@keyframes floatUp {
+    0% {
+        opacity: 0;
+        transform: translateY(0) rotate(0deg);
+    }
+
+    20% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-110vh) rotate(360deg);
+    }
+}
+
+/* --- CONTAINER PRINCIPAL --- */
+.container {
+    width: 100%;
+    max-width: 480px;
+    /* Tamanho de celular */
+    padding: 0 15px;
+    z-index: 10;
+}
+
+/* --- CARDS & VIDRO (GLASSMORPHISM) --- */
+.card,
+.games-lobby {
+    background: var(--card-bg);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* --- TIPOGRAFIA --- */
+h3,
+h4,
+.section-title {
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 0 10px var(--primary-glow);
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.muted {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.center {
+    text-align: center;
+}
+
+/* --- GRID DE JOGOS --- */
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* 3 colunas */
+    gap: 12px;
+    margin: 20px 0;
+}
+
+/* --- CARD DE JOGO INDIVIDUAL --- */
+.game-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 12px 5px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+}
+
+.game-card:hover,
+.game-card:active {
+    transform: translateY(-5px) scale(1.02);
+    background: rgba(255, 111, 163, 0.15);
+    /* Tint rosa ao passar o mouse */
+    border-color: var(--primary);
+    box-shadow: 0 5px 15px var(--primary-glow);
+}
+body {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" style="fill:rgba(255,111,163,0.5);"><circle cx="10" cy="10" r="10"/></svg>'), auto;
+}
+
+/* Brilho que segue o mouse */
+.cursor-glow {
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(255, 111, 163, 0.15) 0%, rgba(255, 111, 163, 0) 70%);
+    position: fixed;
+    pointer-events: none;
+    z-index: -1;
+    transform: translate(-50%, -50%);
+    transition: 0.1s;
+}
+/* Efeito de Brilho Mágico */
+.cursor-glow {
+    width: 400px;
+    /* Tamanho da aura de luz */
+    height: 400px;
+    background: radial-gradient(circle, rgba(255, 111, 163, 0.12) 0%, rgba(255, 111, 163, 0) 70%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    /* ISSO É O MAIS IMPORTANTE: permite clicar nos botões através do brilho */
+    z-index: 9999;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease-out;
+    /* Deixa o movimento suave */
+    display: none;
+    /* Começa escondido para não aparecer no mobile de forma estranha */
+}
+
+/* Só mostra o brilho em dispositivos que possuem mouse (Desktop) */
+@media (hover: hover) {
+    .cursor-glow {
+        display: block;
+    }
+}
+/* Container do Player */
+.music-player-mini {
+    position: fixed;
+    bottom: 20px;
+    /* Distância do fundo */
+    right: 20px;
+    /* Distância da direita */
+    z-index: 10000;
+    /* Garante que fique em cima de tudo */
+
+    background: rgba(255, 111, 163, 0.15);
+    /* Cor temática com transparência */
+    backdrop-filter: blur(10px);
+    /* Efeito de vidro embaçado */
+    -webkit-backdrop-filter: blur(10px);
+
+    padding: 8px 15px;
+    border-radius: 50px;
+    /* Deixa ele bem arredondado (estilo pílula) */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+/* Deixa o player ainda menor no celular */
+@media (max-width: 480px) {
+    .music-player-mini {
+        bottom: 15px;
+        right: 15px;
+        padding: 6px 10px;
+        scale: 0.9;
+    }
+}
+
+/* Ícone e Texto */
+.music-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    font-size: 0.75rem;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    white-space: nowrap;
+    /* Impede que o texto quebre linha */
+}
+
+/* Botão de Play/Pause */
+.music-btn {
+    background: #ff6fa3;
+    color: white;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.music-btn:hover {
+    background: #ff4d8d;
+    transform: scale(1.05);
+}
+
+/* Esconde o elemento de áudio padrão (feio) do navegador */
+#main-audio {
+    display: none;
+}
+
+/* Esconde o player em telas muito pequenas se desejar */
+@media (max-width: 400px) {
+    .music-name {
+        display: none;
+    }
+}
+.gc-thumb {
+    font-size: 32px;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+}
+
+.gc-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+/* --- BOTÕES (O visual mais importante) --- */
+.btn {
+    border: none;
+    outline: none;
+    padding: 12px 24px;
+    border-radius: 50px;
+    /* Redondinho */
+    font-family: var(--font-main);
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn.sm {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+}
+
+.btn.big {
+    padding: 20px 40px;
+    font-size: 1.2rem;
+}
+
+/* Botão Primário (Rosa Neon) */
+.btn.primary,
+.btn:not(.ghost):not(.outline) {
+    background: linear-gradient(135deg, #ff6fa3 0%, #ff8da1 100%);
+    color: #fff;
+    box-shadow: 0 4px 15px var(--primary-glow);
+}
+
+.btn.primary:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 8px var(--primary-glow);
+}
+
+/* Botão Fantasma/Secundário */
+.btn.ghost {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid transparent;
+}
+
+.btn.ghost:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Botão Outline */
+.btn.outline {
+    background: transparent;
+    border: 2px solid var(--secondary);
+    color: var(--secondary);
+    box-shadow: 0 0 10px rgba(122, 231, 255, 0.2);
+}
+
+.btn.outline:active {
+    background: var(--secondary);
+    color: #000;
+}
+
+/* --- INPUTS & CONTROLES --- */
+input {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--glass-border);
+    padding: 12px;
+    border-radius: 12px;
+    color: #fff;
+    font-family: var(--font-main);
+    text-align: center;
+    outline: none;
+    width: 100%;
+}
+
+input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 10px var(--primary-glow);
+}
+
+/* --- ABAS DE NAVEGAÇÃO (Do novo JS) --- */
+.games-nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+}
+
+.nav-tab {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.nav-tab.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
+/* --- ANIMAÇÕES DE ENTRADA --- */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+        will-change: opacity, transform;
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 360px) {
+    .games-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Elementos específicos dos jogos */
+canvas {
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.05);
+}
+
+.score-board {
+    font-size: 1.5rem;
+    color: var(--secondary);
+    text-shadow: 0 0 10px rgba(122, 231, 255, 0.4);
+    margin-bottom: 10px;
+}

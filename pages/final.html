@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Para Sempre ♾️</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@300;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* --- ESTILO CINEMATOGRÁFICO FINAL --- */
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            /* Impede scroll na tela final */
+            background: #05050a;
+        }
+
+        .final-screen {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #05050a 100%);
+        }
+
+        .cinematic {
+            z-index: 10;
+            padding: 20px;
+            animation: fadeIn 3s ease-in;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            color: var(--primary, #ff6fa3);
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 111, 163, 0.5);
+        }
+
+        p {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.2rem;
+            color: #ccc;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            opacity: 0.8;
+        }
+
+        /* Botão Estilizado */
+        .btn-restart {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-family: 'Quicksand';
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-restart:hover {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 0 30px var(--primary-glow);
+            transform: scale(1.05);
+        }
+
+        /* Estrelas de Fundo */
+        .stars-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: twinkle var(--duration) infinite;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Ícone de infinito pulsante */
+        .infinity-icon {
+            font-size: 2rem;
+            color: var(--secondary, #7ae7ff);
+            margin-top: 30px;
+            display: block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+
+            100% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="final-screen" data-page="/pages/final.html">
+        <div class="stars-container" id="stars"></div>
+
+        <section class="cinematic">
+            <h1>Obrigado por ser você.</h1>
+            <p>Este é apenas o começo da nossa história...</p>
+
+            <button class="btn-restart" data-nav="/index.html">Recomeçar Jornada</button>
+
+            <span class="infinity-icon">∞</span>
+            <div class="counter-box" style="margin: 20px 0; font-family:'Quicksand';">
+                <h1>Estamos juntos há:</h1>
+                <div id="timer" style="font-size: 1.5rem; font-family: cursive; font-weight:bold; color:#f5202062;"></div>
+            </div>
+        </section>
+<div id="global-player" class="music-player-mini">
+    <div class="music-info">
+        <span class="music-icon">🎵</span>
+        <span class="music-name"></span>
+    </div>
+    <button id="music-toggle" class="music-btn">PLAY</button>
+    <audio id="main-audio" src="/assets/ambient-lofi-music-chillhop-455379.mp3" loop></audio>
+</div>
+</section>
+</main>
+
+<div class="cursor-glow" id="glow"></div>
+    </main>
+  
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="/js/core.js" defer></script>
+
+    <script>
+        function updateTimer() {
+                const startDate = new Date('2023-06-01T00:00:00'); // COLOQUE A DATA DO INÍCIO AQUI
+                const now = new Date();
+                const diff = now - startDate;
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const mins = Math.floor((diff / 1000 / 60) % 60);
+                const secs = Math.floor((diff / 1000) % 60);
+
+                document.getElementById('timer').innerText =
+                    `${days}d ${hours}h ${mins}m ${secs}s`;
+            }
+            setInterval(updateTimer, 1000);
+            updateTimer();
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Gerar Estrelas Aleatórias
+            const starsContainer = document.getElementById('stars');
+            const starCount = 150;
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+
+                const size = Math.random() * 3 + 'px';
+                star.style.width = size;
+                star.style.height = size;
+
+                star.style.top = Math.random() * 100 + '%';
+                star.style.left = Math.random() * 100 + '%';
+
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                star.style.animationDelay = Math.random() * 5 + 's';
+
+                starsContainer.appendChild(star);
+            }
+
+            // 2. Chuva de Confetes Automática
+            if (typeof confetti === 'function') {
+                const end = Date.now() + (4 * 1000); // 4 segundos de festa
+
+                (function frame() {
+                    confetti({
+                        particleCount: 2,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 },
+                        colors: ['#ff6fa3', '#7ae7ff']
+                    });
+                    confetti({
+                        particleCount: 2,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 },
+                        colors: ['#ff6fa3', '#7ae7ff']
+                    });
+
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                }());
+            }
+
+            // 3. Navegação
+            document.addEventListener('click', e => {
+                const t = e.target.closest('[data-nav]');
+                if (t) {
+                    // Se tiver uma função de navegação no core.js, usa ela, senão usa href
+                    if (typeof navigateTo === 'function') {
+                        navigateTo(t.getAttribute('data-nav'));
+                    } else {
+                        window.location.href = t.getAttribute('data-nav');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Nossa Jornada 🧭</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* --- ESTILOS DO MAPA --- */
+        .map-viewport {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            aspect-ratio: 16 / 9;
+            margin: 20px auto;
+            background: #0a0a12;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .map-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center;
+        }
+
+        .map-background {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            filter: brightness(0.6) contrast(1.2) saturate(0.8);
+        }
+
+        /* --- PINS ESTILIZADOS --- */
+        .map-pin {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: var(--primary, #ff6fa3);
+            border-radius: 50% 50% 50% 0;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 0 15px var(--primary-glow);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Efeito de Coração/Ícone dentro do Pin */
+        .map-pin::after {
+            content: '❤';
+            color: white;
+            font-size: 12px;
+            transform: rotate(45deg);
+        }
+
+        /* Pulso de atração */
+        .map-pin::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--primary);
+            animation: pinPulse 2s infinite;
+            z-index: -1;
+            transform: scale(1);
+        }
+
+        @keyframes pinPulse {
+            0% {
+                opacity: 0.8;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .map-pin.active {
+            background: var(--secondary, #7ae7ff);
+            transform: translate(-50%, -50%) rotate(-45deg) scale(1.3);
+            z-index: 100;
+        }
+
+        /* Ajuste do tamanho do pin durante o zoom */
+        .zoomed .map-pin {
+            transform: translate(-50%, -50%) rotate(-45deg) scale(0.6);
+        }
+
+        .zoomed .map-pin.active {
+            transform: translate(-50%, -50%) rotate(-45deg) scale(0.9);
+        }
+
+        /* --- CARD DE INFO (GLASSMORPHISM) --- */
+        .map-info-card {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(15, 15, 25, 0.85);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 111, 163, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            transform: translateY(160%);
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 150;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .map-info-card.active {
+            transform: translateY(0);
+        }
+
+        #infoTitle {
+            color: var(--secondary, #7ae7ff);
+            margin-bottom: 5px;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        #infoText {
+            color: #eee;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .btn-zoom-out {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 160;
+            padding: 8px 16px;
+            display: none;
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+            font-size: 0.8rem;
+        }
+
+        .header-custom {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            .map-viewport {
+                aspect-ratio: 4 / 5;
+            }
+
+            /* Mais vertical no celular */
+        }
+    </style>
+</head>
+
+<body>
+    <main class="page container">
+        <header class="header-custom">
+            <h2 class="section-title">Nossa Jornada 🧭</h2>
+            <p class="header-subtitle">Clique nos pontos para mergulhar nas memórias</p>
+        </header>
+
+        <div class="map-viewport" id="viewport">
+            <button type="button" class="btn primary btn-zoom-out" id="resetZoom">✕ Fechar Zoom</button>
+
+            <div class="map-wrapper" id="mapWrapper">
+                <img src="/assets/fotos/mapa-estilizado.jpg" class="map-background" alt="Nosso Mapa"
+                    onerror="this.src='https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1000'">
+            </div>
+
+            <div class="map-info-card" id="infoCard">
+                <h3 id="infoTitle">Lugar</h3>
+                <p id="infoText">Descrição...</p>
+            </div>
+        </div>
+
+        <div class="controls-row">
+            <button type="button" class="btn outline" data-action="prev">Voltar</button>
+            <button type="button" class="btn outline" data-action="next">Próximo</button>
+        </div>
+        <div id="global-player" class="music-player-mini">
+            <div class="music-info">
+                <span class="music-icon">🎵</span>
+                <span class="music-name"></span>
+            </div>
+            <button id="music-toggle" class="music-btn">PLAY</button>
+            <audio id="main-audio" src="/assets/ambient-lofi-music-chillhop-455379.mp3" loop></audio>
+        </div>
+    </main>
+
+    <script src="/js/core.js" defer></script>
+    <script src="/js/data.js" defer></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const wrapper = document.getElementById('mapWrapper');
+            const viewport = document.getElementById('viewport');
+            const infoCard = document.getElementById('infoCard');
+            const resetBtn = document.getElementById('resetZoom');
+
+            // 1. Dados: Prioriza window.data.mapPoints (do data.js)
+            const mapData = (window.data && window.data.mapPoints) ? window.data.mapPoints : [
+                { x: 25, y: 40, title: "Primeiro Encontro", text: "Onde tudo era apenas o começo de algo eterno." },
+                { x: 55, y: 65, title: "O Primeiro Beijo", text: "O mundo silenciou e só existíamos nós dois." },
+                { x: 75, y: 35, title: "Nosso Lugar", text: "Onde sempre voltamos quando precisamos de paz." }
+            ];
+
+            const pins = [];
+
+            // 2. Criação dos Pins
+            mapData.forEach((p, idx) => {
+                const pin = document.createElement('div');
+                pin.className = 'map-pin';
+                pin.style.left = `${p.x}%`;
+                pin.style.top = `${p.y}%`;
+
+                pin.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openPoint(idx);
+                });
+
+                wrapper.appendChild(pin);
+                pins.push(pin);
+            });
+
+            // 3. Função de Abrir Ponto (Zoom)
+            function openPoint(idx) {
+                const p = mapData[idx];
+
+                // Aplica o "Mergulho"
+                wrapper.style.transformOrigin = `${p.x}% ${p.y}%`;
+                wrapper.style.transform = 'scale(4)'; // Aumentado para um mergulho mais profundo
+
+                viewport.classList.add('zoomed');
+                resetBtn.style.display = 'block';
+
+                // Atualiza Card
+                document.getElementById('infoTitle').innerText = p.title;
+                document.getElementById('infoText').innerText = p.text;
+                infoCard.classList.add('active');
+
+                // Destaque no Pin
+                pins.forEach((pin, i) => pin.classList.toggle('active', i === idx));
+            }
+
+            // 4. Resetar Zoom
+            function resetZoom() {
+                wrapper.style.transform = 'scale(1)';
+                viewport.classList.remove('zoomed');
+                infoCard.classList.remove('active');
+                resetBtn.style.display = 'none';
+                pins.forEach(pin => pin.classList.remove('active'));
+            }
+
+            resetBtn.addEventListener('click', resetZoom);
+
+            // Fechar ao clicar fora
+            viewport.addEventListener('click', (e) => {
+                if (e.target.classList.contains('map-background') || e.target === wrapper) {
+                    resetZoom();
+                }
+            });
+
+            // 5. Navegação (Usando as funções globais se existirem)
+            document.addEventListener('click', e => {
+                const btn = e.target.closest('[data-action]');
+                if (!btn) return;
+
+                if (btn.dataset.action === 'prev') {
+                    typeof goPrev === 'function' ? goPrev() : history.back();
+                } else {
+                    typeof goNext === 'function' ? goNext() : window.location.href = 'proxima_pagina.html';
+                }
+            });
+
+            // Atalhos de Teclado
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') resetZoom();
+            });
+        });
+    </script>
+</body>
+
+</html>

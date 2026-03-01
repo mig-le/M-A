@@ -1,0 +1,343 @@
+/* --- RESET & BASE --- */
+:root {
+    --bg-dark: #0f0518;
+    /* Roxo muito escuro */
+    --card-bg: rgba(30, 15, 45, 0.6);
+    /* Vidro escuro */
+    --primary: #ff6fa3;
+    /* Rosa Romântico */
+    --primary-glow: rgba(255, 111, 163, 0.4);
+    --secondary: #7ae7ff;
+    /* Azul Ciano Fofo */
+    --text-main: #ffeaf2;
+    /* Branco rosado */
+    --text-muted: #bdaec6;
+    /* Lilás acinzentado */
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --font-main: 'Quicksand', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background: var(--bg-dark);
+    background-image: radial-gradient(circle at top right, #2a0e36 0%, var(--bg-dark) 60%);
+    font-family: var(--font-main);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+    padding: 20px 0;
+}
+
+/* --- ANIMAÇÃO DE FUNDO (CORAÇÕES) --- */
+.background-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.background-animation span {
+    position: absolute;
+    bottom: -50px;
+    font-size: 24px;
+    opacity: 0.3;
+    animation: floatUp 15s linear infinite;
+    will-change: transform, opacity;
+}
+
+.background-animation span:nth-child(1) {
+    left: 10%;
+    animation-duration: 12s;
+    animation-delay: 0s;
+}
+
+.background-animation span:nth-child(2) {
+    left: 30%;
+    animation-duration: 18s;
+    animation-delay: 2s;
+    font-size: 30px;
+}
+
+.background-animation span:nth-child(3) {
+    left: 70%;
+    animation-duration: 10s;
+    animation-delay: 4s;
+}
+
+.background-animation span:nth-child(4) {
+    left: 50%;
+    animation-duration: 15s;
+    animation-delay: 1s;
+    font-size: 15px;
+}
+
+.background-animation span:nth-child(5) {
+    left: 90%;
+    animation-duration: 14s;
+    animation-delay: 3s;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: translateY(-110vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* --- CONTAINER PRINCIPAL --- */
+.container {
+    width: 100%;
+    max-width: 480px;
+    /* Tamanho de celular */
+    padding: 0 15px;
+    z-index: 10;
+}
+
+/* --- CARDS & VIDRO (GLASSMORPHISM) --- */
+.card,
+.games-lobby {
+    background: var(--card-bg);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* --- TIPOGRAFIA --- */
+h3,
+h4,
+.section-title {
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 0 10px var(--primary-glow);
+    margin-bottom: 8px;
+}
+
+.muted {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.center {
+    text-align: center;
+}
+
+/* --- GRID DE JOGOS --- */
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* 3 colunas */
+    gap: 12px;
+    margin: 20px 0;
+}
+
+/* --- CARD DE JOGO INDIVIDUAL --- */
+.game-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 12px 5px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+}
+
+.game-card:hover,
+.game-card:active {
+    transform: translateY(-5px) scale(1.02);
+    background: rgba(255, 111, 163, 0.15);
+    /* Tint rosa ao passar o mouse */
+    border-color: var(--primary);
+    box-shadow: 0 5px 15px var(--primary-glow);
+}
+
+.gc-thumb {
+    font-size: 32px;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+}
+
+.gc-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+/* --- BOTÕES (O visual mais importante) --- */
+.btn {
+    border: none;
+    outline: none;
+    padding: 12px 24px;
+    border-radius: 50px;
+    /* Redondinho */
+    font-family: var(--font-main);
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn.sm {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+}
+
+.btn.big {
+    padding: 20px 40px;
+    font-size: 1.2rem;
+}
+
+/* Botão Primário (Rosa Neon) */
+.btn.primary,
+.btn:not(.ghost):not(.outline) {
+    background: linear-gradient(135deg, #ff6fa3 0%, #ff8da1 100%);
+    color: #fff;
+    box-shadow: 0 4px 15px var(--primary-glow);
+}
+
+.btn.primary:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 8px var(--primary-glow);
+}
+
+/* Botão Fantasma/Secundário */
+.btn.ghost {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid transparent;
+}
+
+.btn.ghost:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Botão Outline */
+.btn.outline {
+    background: transparent;
+    border: 2px solid var(--secondary);
+    color: var(--secondary);
+    box-shadow: 0 0 10px rgba(122, 231, 255, 0.2);
+}
+
+.btn.outline:active {
+    background: var(--secondary);
+    color: #000;
+}
+
+/* --- INPUTS & CONTROLES --- */
+input {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--glass-border);
+    padding: 12px;
+    border-radius: 12px;
+    color: #fff;
+    font-family: var(--font-main);
+    text-align: center;
+    outline: none;
+    width: 100%;
+}
+
+input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 10px var(--primary-glow);
+}
+
+/* --- ABAS DE NAVEGAÇÃO (Do novo JS) --- */
+.games-nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+}
+
+.nav-tab {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.nav-tab.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
+/* --- ANIMAÇÕES DE ENTRADA --- */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 360px) {
+    .games-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Elementos específicos dos jogos */
+canvas {
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.05);
+}
+
+.score-board {
+    font-size: 1.5rem;
+    color: var(--secondary);
+    text-shadow: 0 0 10px rgba(122, 231, 255, 0.4);
+    margin-bottom: 10px;
+}

@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Nosso Mural 🖍️</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Quicksand:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* --- ESTILOS DO MURAL --- */
+
+        .mural-input-area {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            color: #fff;
+            font-family: 'Indie Flower', cursive;
+            font-size: 1.2rem;
+            resize: none;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        textarea:focus {
+            border-color: var(--primary, #ff6fa3);
+            box-shadow: 0 0 10px rgba(255, 111, 163, 0.2);
+        }
+
+        /* Grid dos Recados */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            perspective: 1000px;
+        }
+
+        .note-card {
+            background: rgba(255, 235, 59, 0.15);
+            /* Amarelo Post-it translúcido */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 2px 2px 15px 2px;
+            /* Cantinho dobrado visual */
+            position: relative;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            will-change: transform;
+        }
+
+        /* Cores variadas para os post-its (via nth-child) */
+        .note-card:nth-child(3n+1) {
+            background: rgba(255, 111, 163, 0.15);
+            border-color: rgba(255, 111, 163, 0.3);
+        }
+
+        /* Rosa */
+        .note-card:nth-child(3n+2) {
+            background: rgba(122, 231, 255, 0.15);
+            border-color: rgba(122, 231, 255, 0.3);
+        }
+
+        /* Azul */
+
+        .note-card:hover {
+            transform: scale(1.05) rotate(0deg) !important;
+            /* Endireita ao passar o mouse */
+            z-index: 10;
+            background: rgba(40, 40, 50, 0.9);
+            /* Fica escuro para ler melhor */
+            border-color: var(--primary);
+        }
+
+        .note-text {
+            font-family: 'Indie Flower', cursive;
+            font-size: 1.3rem;
+            color: #eee;
+            margin-bottom: 15px;
+            white-space: pre-wrap;
+            /* Mantém as quebras de linha */
+            line-height: 1.4;
+        }
+
+        .note-date {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-align: right;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        /* Botão de Excluir (X) */
+        .delete-note {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(255, 0, 0, 0.3);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: 0.2s;
+        }
+
+        .note-card:hover .delete-note {
+            opacity: 1;
+        }
+
+        .delete-note:hover {
+            background: red;
+        }
+
+        @keyframes popIn {
+            from {
+                scale: 0.5;
+            }
+
+            to {
+                scale: 1;
+            }
+        }
+
+        .empty-msg {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.3);
+            grid-column: 1 / -1;
+            padding: 40px;
+            font-style: italic;
+        }
+
+        .mural-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .mural-subtitle {
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+    <main class="page container" data-page="/pages/mural.html">
+        <header class="mural-header">
+            <h2 class="section-title">Mural de Recados 🖍️</h2>
+            <p class="mural-subtitle">Deixe um pedacinho do seu dia aqui.</p>
+        </header>
+
+        <div class="mural-input-area">
+            <textarea id="muralTxt" placeholder="Escreva algo bonito hoje..."></textarea>
+            <button type="button" class="btn primary" id="saveMural">📌 Colar no Mural</button>
+        </div>
+
+        <div id="notesContainer" class="notes-grid">
+        </div>
+
+        <div class="controls-row">
+            <button type="button" class="btn outline" data-action="prev">Voltar</button>
+            <button type="button" class="btn outline" data-action="next">Próximo</button>
+        </div>
+        <div id="global-player" class="music-player-mini">
+            <div class="music-info">
+                <span class="music-icon">🎵</span>
+                <span class="music-name"></span>
+            </div>
+            <button id="music-toggle" class="music-btn">PLAY</button>
+            <audio id="main-audio" src="/assets/ambient-lofi-music-chillhop-455379.mp3" loop></audio>
+        </div>
+    </main>
+
+    <script src="/js/core.js" defer></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const input = document.getElementById('muralTxt');
+            const saveBtn = document.getElementById('saveMural');
+            const container = document.getElementById('notesContainer');
+
+            // Carregar notas salvas
+            let notes = JSON.parse(localStorage.getItem('nh_mural_list')) || [];
+
+            // Função para desenhar as notas na tela
+            function renderNotes() {
+                container.innerHTML = '';
+
+                if (notes.length === 0) {
+                    container.innerHTML = '<div class="empty-msg">O mural está vazio... seja o primeiro a escrever! ✨</div>';
+                    return;
+                }
+
+                notes.forEach((note, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'note-card';
+
+                    // Rotação aleatória leve para parecer natural
+                    const rotation = (Math.random() * 6) - 3;
+                    card.style.transform = `rotate(${rotation}deg)`;
+
+                    card.innerHTML = `
+                        <button class="delete-note" onclick="deleteNote(${index})">✕</button>
+                        <div class="note-text">${note.text}</div>
+                        <div class="note-date">${note.date}</div>
+                    `;
+                    container.prepend(card); // Adiciona o mais novo no topo
+                });
+            }
+
+            // Função de Salvar
+            saveBtn.addEventListener('click', () => {
+                const text = input.value.trim();
+                if (!text) return;
+
+                const newNote = {
+                    text: text,
+                    date: new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+                };
+
+                notes.push(newNote);
+                localStorage.setItem('nh_mural_list', JSON.stringify(notes));
+
+                input.value = ''; // Limpa o campo
+                renderNotes();
+            });
+
+            // Função de Deletar (Global para ser acessada pelo onclick do HTML)
+            window.deleteNote = (index) => {
+                if (confirm('Quer mesmo descolar esse recado?')) {
+                    // Como invertemos a ordem visual (prepend), precisamos ajustar o index real
+                    // Para simplificar, vamos inverter o array, deletar e salvar
+                    // Ou melhor: deletar pelo index correto considerando que renderizamos do fim pro começo?
+                    // Vamos simplificar: O renderNotes usa prepend, mas o forEach roda normal (0, 1, 2).
+                    // O item visualmente #1 é na verdade o último do array se usarmos prepend.
+                    // Para evitar confusão, vamos deletar e renderizar tudo de novo.
+
+                    notes.splice(index, 1);
+                    localStorage.setItem('nh_mural_list', JSON.stringify(notes));
+                    renderNotes();
+                }
+            };
+
+            // Migração de dados antigos (se houver)
+            const oldData = localStorage.getItem('nh_mural');
+            if (oldData && !localStorage.getItem('nh_mural_list')) {
+                notes.push({ text: oldData, date: 'Arquivo antigo' });
+                localStorage.setItem('nh_mural_list', JSON.stringify(notes));
+                localStorage.removeItem('nh_mural'); // Limpa o antigo
+            }
+
+            // Inicializar
+            renderNotes();
+
+            // Navegação
+            document.addEventListener('click', e => {
+                const a = e.target.closest('[data-action]');
+                if (!a) return;
+                a.dataset.action === 'prev' ? goPrev() : goNext();
+            });
+        });
+    </script>
+</body>
+
+</html>

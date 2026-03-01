@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Nossa Galeria 📸</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Quicksand:wght@400;600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* --- ESTILOS EXCLUSIVOS DA GALERIA --- */
+            .polaroid video,
+            #lb-media video {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            background: #000;
+            }
+
+            #lb-media video {
+            max-width: 90%;
+            max-height: 80vh;
+            border: 5px solid #fff;
+            border-radius: 8px;
+            }
+
+
+        /* Container flexível para as fotos se acomodarem */
+        .polaroid-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            padding: 20px 0;
+            perspective: 1000px;
+        }
+
+        /* O Cartão Polaroid */
+        .polaroid {
+            background: #fff;
+            padding: 15px 15px 50px 15px;
+            /* Espaço maior embaixo para legenda */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            width: 280px;
+            position: relative;
+            cursor: pointer;
+            border-radius: 4px;
+            /* Polaroids reais não são super redondas */
+            animation: floatIn 0.8s ease-out backwards;
+        }
+
+        /* Efeito de Hover (Levantar e Endireitar) */
+        .polaroid:hover {
+            transform: scale(1.1) rotate(0deg) !important;
+            /* !important para sobrescrever o inline style */
+            z-index: 10;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Imagem dentro da Polaroid */
+        .polaroid img {
+            width: 100%;
+            height: 280px;
+            /* Quadrado */
+            object-fit: cover;
+            border: 1px solid #eee;
+            background: #f0f0f0;
+            /* Placeholder cor */
+        }
+
+        /* Legenda Manuscrita */
+        .polaroid figcaption {
+            font-family: 'Indie Flower', cursive;
+            font-size: 1.4rem;
+            color: #333;
+            text-align: center;
+            margin-top: 15px;
+            line-height: 1.2;
+            transform: rotate(-1deg);
+        }
+
+        /* Efeito de Fita Adesiva (Washi Tape) */
+        .polaroid::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-2deg);
+            width: 100px;
+            height: 35px;
+            background-color: rgba(255, 255, 255, 0.4);
+            border-left: 2px dashed rgba(255, 255, 255, 0.2);
+            border-right: 2px dashed rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            -webkit-backdrop-filter: blur(2px);
+            backdrop-filter: blur(2px);
+            z-index: 2;
+        }
+
+        /* Cores variadas para a fita (usando nth-child seria complexo com JS, 
+           então vamos usar uma cor padrão translúcida que funciona bem no dark mode) */
+
+        /* --- LIGHTBOX (ZOOM) --- */
+        #lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        #lightbox.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        #lightbox img {
+            max-width: 90%;
+            max-height: 80vh;
+            border: 5px solid #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 50px rgba(255, 111, 163, 0.4);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #lightbox-caption {
+            color: #fff;
+            font-family: 'Indie Flower', cursive;
+            font-size: 2rem;
+            margin-top: 20px;
+            text-shadow: 0 2px 4px #000;
+        }
+
+        #close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 3rem;
+            color: #fff;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #close-btn:hover {
+            color: #ff6fa3;
+            transform: rotate(90deg);
+        }
+
+        @keyframes floatIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+                will-change: opacity, transform;
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.8);
+                will-change: transform;
+            }
+
+            to {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-animation">
+        <span>📸</span><span>✨</span><span>🖼️</span><span>❤</span><span>✨</span>
+    </div>
+
+    <main class="page container">
+        <section class="gallery">
+            <h2 class="section-title gallery-title">
+                Nossas Memórias 📸
+            </h2>
+
+            <div id="galleryGrid" class="polaroid-grid">
+            </div>
+
+            <div class="controls-row gallery-controls">
+                <button type="button" class="btn outline" onclick="goPrev()">Voltar</button>
+                <button type="button" class="btn outline" onclick="goNext()">Próximo</button>
+            </div>
+        </section>
+        <div id="global-player" class="music-player-mini">
+            <div class="music-info">
+                <span class="music-icon">🎵</span>
+                <span class="music-name"></span>
+            </div>
+            <button id="music-toggle" class="music-btn">PLAY</button>
+            <audio id="main-audio" src="/assets/ambient-lofi-music-chillhop-455379.mp3" loop></audio>
+        </div> 
+    </main>
+
+    <div id="lightbox" onclick="closeLightbox(event)">
+        <span id="close-btn">&times;</span>
+        <div id="lb-media"></div>
+
+        <div id="lightbox-caption"></div>
+    </div>
+
+    <script src="/js/core.js" defer></script>
+    <script src="/js/data.js" defer></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('galleryGrid');
+            const lightbox = document.getElementById('lightbox');
+            const lbMedia = document.getElementById('lb-media');
+            const lbCap = document.getElementById('lightbox-caption');
+
+            // Fallback caso o data.js falhe
+            const galleryData = (window.data && window.data.gallery) ? window.data.gallery : [
+                { src: '/assets/fotos/placeholder.jpg', caption: 'Momento Especial', type: 'image' }
+            ];
+
+            galleryData.forEach((item, index) => {
+                const card = document.createElement('figure');
+                card.className = 'polaroid';
+
+                // rotação aleatória
+                const randomRotate = Math.floor(Math.random() * 12) - 6;
+                card.style.transform = `rotate(${randomRotate}deg)`;
+                card.style.animationDelay = `${index * 0.1}s`;
+
+                const media =
+                    item.type === 'video'
+                        ? `<video src="${item.src}" muted loop playsinline></video>`
+                        : `<img src="${item.src}" alt="${item.caption}" loading="lazy">`;
+
+                card.innerHTML = `
+          ${media}
+          <figcaption>${item.caption || 'Sem legenda'}</figcaption>
+        `;
+
+                card.onclick = () => openLightbox(item);
+                grid.appendChild(card);
+            });
+
+            // LIGHTBOX
+            window.openLightbox = (item) => {
+                lbMedia.innerHTML =
+                    item.type === 'video'
+                        ? `<video src="${item.src}" controls autoplay></video>`
+                        : `<img src="${item.src}" alt="">`;
+
+                lbCap.textContent = item.caption || '';
+                lightbox.classList.add('active');
+            };
+
+            window.closeLightbox = (e) => {
+                if (!e.target.closest('#lb-media')) {
+                    lightbox.classList.remove('active');
+                    lbMedia.innerHTML = '';
+                }
+            };
+        });
+    </script>
+
+</body>
+
+</html>
